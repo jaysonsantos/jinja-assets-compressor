@@ -41,12 +41,20 @@ class CompilerExtension(Extension):
         else:
             raise RuntimeError('Unsupported type of compression %s' % type)
 
+    def _find_file(self, path):
+        for d in self.environment.compressor_source_dir:
+            filename = os.path.join(d, path)
+            if os.path.exists(filename):
+                return filename
+
+        raise IOError(2, 'File not found %s' % path)
+
     def _make_hash(self, html, compilables):
         html_hash = hashlib.sha256(html)
 
         for c in compilables:
             if c.get('src'):
-                with open('filename', 'r') as f:
+                with open(self._find_file(c['src']), 'rb') as f:
                     while True:
                         content = f.read(1024)
                         if content:

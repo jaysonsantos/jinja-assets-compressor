@@ -1,3 +1,5 @@
+import os
+
 import mock
 import pytest
 
@@ -50,3 +52,24 @@ $margin: 16px
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static'))
 
         assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
+
+    def test_compile_file(self, tmpdir):
+        from jac import CompilerExtension
+        ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dir=[str(tmpdir)]))
+
+        with open(os.path.join(str(tmpdir), 'test.sass'), 'wb') as f:
+            f.write('''$blue: #3bbfce
+$margin: 16px
+
+.content-navigation
+  border-color: $blue
+  color: darken($blue, 9%)
+
+.border
+  padding: $margin / 2
+  margin: $margin / 2
+  border-color: $blue''')
+
+        html = '<link type="text/sass" rel="stylesheet" src="test.sass" />'
+
+        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="/static/331d363d3c3cbf5a22f29e190596f996d37e0777e7d3173240801236ee9eb8c7.css" />'
