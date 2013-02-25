@@ -14,8 +14,7 @@ class TestCompression:
 
     @pytest.fixture
     def html(self):
-        return '''{% compress "css" %}
-<link rel="stylesheet" type="text/sass">
+        return '''<link rel="stylesheet" type="text/sass">
 $blue: #3bbfce
 $margin: 16px
 
@@ -33,25 +32,15 @@ $margin: 16px
     color: black;
 }
 </style>
-{% endcompress %}'''
+'''
 
-    def _test_compress(self, env, html):
-        html = ''''''
+    @pytest.fixture
+    def html_template(self):
+        return '{% compress "css" %}' + self.html() + '{% endcompress %}'
 
-        template = env.from_string(html)
-        expected = '''<style type="text/css">.content-navigation {
-  border-color: #3bbfce;
-  color: #2ca2af; }
-
-.border {
-  padding: 8px;
-  margin: 8px;
-  border-color: #3bbfce; }
-
-#main {
-    color: black;
-}
-</style>'''
+    def test_compress(self, env, html_template):
+        template = env.from_string(html_template)
+        expected = '<link type="text/css" rel="stylesheet" src="761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
 
         assert expected == template.render()
 
@@ -59,4 +48,4 @@ $margin: 16px
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir))
 
-        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="0db3ca27a871892cdac8ca68b6278cf727375249bd0df743e2ce36439582976a.css" />'
+        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
