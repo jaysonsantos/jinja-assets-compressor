@@ -12,20 +12,17 @@ class CompilerMeta(type):
         return cls
 
 
-def compile(what, mimetype=None):
+def compile(what, mimetype):
     """
-    Compile a given text.
-    If mimetype is null, we assume what is a HTML tag and we try to get it's content and search for a compiler based on type attribute.
-    If mimetype is not null, we just search for it's compiler and return compiled text.
+    Compile a given text based on mimetype.
     """
-    if mimetype:
-        try:
-            compiler = compilers[mimetype.lower()]
-        except KeyError:
-            raise RuntimeError('Compiler for mimetype %s not found.' % mimetype)
 
-        return compiler.compile(what)
+    try:
+        compiler = compilers[mimetype.lower()]
+    except KeyError:
+        raise RuntimeError('Compiler for mimetype %s not found.' % mimetype)
 
-    return what
+    return compiler.compile(what)
+
 
 from .sass import SassCompiler
