@@ -1,2 +1,3 @@
 pytest==2.3.4
 ipdb
+pytest-xdist
