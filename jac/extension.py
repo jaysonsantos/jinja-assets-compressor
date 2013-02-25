@@ -41,13 +41,7 @@ class CompilerExtension(Extension):
         else:
             raise RuntimeError('Unsupported type of compression %s' % type)
 
-    def _compile(self, type, caller):
-        type = type.lower()
-        html = caller()
-        soup = BeautifulSoup(html)
-        compilables = self._find_compilable_tags(soup)
-        text = ''
-
+    def _make_hash(self, html, compilables):
         html_hash = hashlib.sha256(html)
 
         for c in compilables:
@@ -60,8 +54,19 @@ class CompilerExtension(Extension):
                         else:
                             break
 
+        return html_hash.hexdigest()
+
+    def _compile(self, type, caller):
+        type = type.lower()
+        html = caller()
+        soup = BeautifulSoup(html)
+        compilables = self._find_compilable_tags(soup)
+        text = ''
+
+        html_hash = self._make_hash(html, compilables)
+
         cached_file = os.path.join(str(self.environment.compressor_output_dir),
-                                   '%s.%s') % (html_hash.hexdigest(), type)
+                                   '%s.%s') % (html_hash, type)
 
         if os.path.exists(cached_file):
             return self._render_block(cached_file, type)
