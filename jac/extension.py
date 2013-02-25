@@ -64,6 +64,12 @@ class CompilerExtension(Extension):
 
         return html_hash.hexdigest()
 
+    def _get_contents(self, src):
+        if isinstance(src, file):
+            return src.read()
+        else:
+            return src
+
     def _compile(self, compression_type, caller):
         compression_type = compression_type.lower()
         html = caller()
@@ -71,7 +77,7 @@ class CompilerExtension(Extension):
         compilables = self._find_compilable_tags(soup)
         text = ''
 
-        html_hash = self._make_hash(html, compilables)
+        html_hash = self._make_hash(html, self._find_compilable_tags(soup))
 
         cached_file = os.path.join(str(self.environment.compressor_output_dir),
                                    '%s.%s') % (html_hash, compression_type)
@@ -80,16 +86,22 @@ class CompilerExtension(Extension):
             return self._render_block(cached_file, compression_type)
 
         for c in compilables:
-            if c.get('compression_type') is None:
+            if c.get('type') is None:
                 raise RuntimeError('Tags to be compressed must have a compression_type.')
 
-            if c.name == 'link' and c.get('rel', [''])[0].lower() != 'stylesheet':
-                text += c.string
-
-            if c['compression_type'].lower() in ('text/css', 'text/javascript'):
-                text += c.string
+            src = c.get('src')
+            if src:
+                src = open(self._find_file(src), 'rb')
             else:
-                text += compile(c.string, c['compression_type'])
+                src = c.string
+
+            if c.name == 'link' and c.get('rel', [''])[0].lower() != 'stylesheet':
+                text += self._get_contents(src)
+
+            if c['type'].lower() in ('text/css', 'text/javascript'):
+                text += self._get_contents(src)
+            else:
+                text += compile(self._get_contents(src), c['type'])
 
         with open(cached_file, 'w') as f:
             f.write(text)
