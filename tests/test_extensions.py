@@ -10,6 +10,7 @@ class TestCompression:
         from jac import CompilerExtension
         env = jinja2.Environment(extensions=[CompilerExtension])
         env.compressor_output_dir = tmpdir
+        env.compressor_static_prefix = '/static'
         return env
 
     @pytest.fixture
@@ -40,12 +41,12 @@ $margin: 16px
 
     def test_compress(self, env, html_template):
         template = env.from_string(html_template)
-        expected = '<link type="text/css" rel="stylesheet" src="761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
+        expected = '<link type="text/css" rel="stylesheet" src="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
 
         assert expected == template.render()
 
     def test_compile(self, tmpdir, html):
         from jac import CompilerExtension
-        ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir))
+        ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static'))
 
-        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
+        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'

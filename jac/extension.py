@@ -32,7 +32,7 @@ class CompilerExtension(Extension):
             yield script
 
     def _render_block(self, filename, type):
-        filename = os.path.basename(filename)
+        filename = '%s/%s' % (self.environment.compressor_static_prefix, os.path.basename(filename))
 
         if type.lower() == 'css':
             return '<link type="text/css" rel="stylesheet" src="%s" />' % filename
