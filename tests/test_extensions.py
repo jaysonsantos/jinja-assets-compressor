@@ -1,17 +1,20 @@
+import mock
 import pytest
 
 import jinja2
 
-from jac import CompilerExtension
-
 
 class TestCompression:
     @pytest.fixture
-    def env(self):
-        return jinja2.Environment(extensions=[CompilerExtension])
+    def env(self, tmpdir):
+        from jac import CompilerExtension
+        env = jinja2.Environment(extensions=[CompilerExtension])
+        env.compressor_output_dir = tmpdir
+        return env
 
-    def test_compress(self, env):
-        html = '''{% compress "css" %}
+    @pytest.fixture
+    def html(self):
+        return '''{% compress "css" %}
 <link rel="stylesheet" type="text/sass">
 $blue: #3bbfce
 $margin: 16px
@@ -32,6 +35,9 @@ $margin: 16px
 </style>
 {% endcompress %}'''
 
+    def _test_compress(self, env, html):
+        html = ''''''
+
         template = env.from_string(html)
         expected = '''<style type="text/css">.content-navigation {
   border-color: #3bbfce;
@@ -48,3 +54,9 @@ $margin: 16px
 </style>'''
 
         assert expected == template.render()
+
+    def test_compile(self, tmpdir, html):
+        from jac import CompilerExtension
+        ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir))
+
+        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" src="0db3ca27a871892cdac8ca68b6278cf727375249bd0df743e2ce36439582976a.css" />'

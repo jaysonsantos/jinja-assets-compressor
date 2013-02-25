@@ -19,7 +19,7 @@ $margin: 16px
 .border
   padding: $margin / 2
   margin: $margin / 2
-  border-color: $blue '''
+  border-color: $blue'''
 
     def test_compiling(self, sample_sass):
         compiled_css = """.content-navigation {
