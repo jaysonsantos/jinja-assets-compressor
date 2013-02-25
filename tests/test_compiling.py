@@ -22,7 +22,7 @@ $margin: 16px
   border-color: $blue '''
 
     def test_compiling(self, sample_sass):
-        compiled_sass = """.content-navigation {
+        compiled_css = """.content-navigation {
   border-color: #3bbfce;
   color: #2ca2af; }
 
@@ -32,4 +32,4 @@ $margin: 16px
   border-color: #3bbfce; }
 """
 
-        assert jac.compile(sample_sass, 'text/sass') == compiled_sass
+        assert jac.compile(sample_sass, 'text/sass') == compiled_css
