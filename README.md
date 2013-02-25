@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jaysonsantos/jinja-assets-compressor.png?branch=master)](https://travis-ci.org/jaysonsantos/jinja-assets-compressor)
+
 jinja-assets-compressor
 =======================
 
