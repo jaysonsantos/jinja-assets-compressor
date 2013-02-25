@@ -39,7 +39,7 @@ $margin: 16px
     def html_template(self):
         return '{% compress "css" %}' + self.html() + '{% endcompress %}'
 
-    def test_compress(self, env, html_template):
+    def test_render(self, env, html_template):
         template = env.from_string(html_template)
         expected = '<link type="text/css" rel="stylesheet" src="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
 
