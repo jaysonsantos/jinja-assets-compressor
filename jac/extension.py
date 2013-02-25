@@ -56,8 +56,8 @@ class CompilerExtension(Extension):
 
         return html_hash.hexdigest()
 
-    def _compile(self, type, caller):
-        type = type.lower()
+    def _compile(self, compression_type, caller):
+        compression_type = compression_type.lower()
         html = caller()
         soup = BeautifulSoup(html)
         compilables = self._find_compilable_tags(soup)
@@ -66,24 +66,24 @@ class CompilerExtension(Extension):
         html_hash = self._make_hash(html, compilables)
 
         cached_file = os.path.join(str(self.environment.compressor_output_dir),
-                                   '%s.%s') % (html_hash, type)
+                                   '%s.%s') % (html_hash, compression_type)
 
         if os.path.exists(cached_file):
-            return self._render_block(cached_file, type)
+            return self._render_block(cached_file, compression_type)
 
         for c in compilables:
-            if c.get('type') is None:
-                raise RuntimeError('Tags to be compressed must have a type.')
+            if c.get('compression_type') is None:
+                raise RuntimeError('Tags to be compressed must have a compression_type.')
 
             if c.name == 'link' and c.get('rel', [''])[0].lower() != 'stylesheet':
                 text += c.string
 
-            if c['type'].lower() in ('text/css', 'text/javascript'):
+            if c['compression_type'].lower() in ('text/css', 'text/javascript'):
                 text += c.string
             else:
-                text += compile(c.string, c['type'])
+                text += compile(c.string, c['compression_type'])
 
         with open(cached_file, 'w') as f:
             f.write(text)
 
-        return self._render_block(cached_file, type)
+        return self._render_block(cached_file, compression_type)
