@@ -38,6 +38,12 @@ $margin: 16px
 '''
 
     @pytest.fixture
+    def html_js(self):
+        return '''<script type="text/javascript">
+alert("Hi");
+</script>'''
+
+    @pytest.fixture
     def html_template(self):
         return '{% compress "css" %}' + self.html_css() + '{% endcompress %}'
 
@@ -53,6 +59,11 @@ $margin: 16px
 
         assert ext._compile('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" src="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
 
+    def test_compile_js(self, tmpdir, html_js):
+        from jac import CompilerExtension
+        ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static'))
+
+        assert ext._compile('js', mock.Mock(return_value=html_js)) == '<script type="text/javascript" src="/static/adbdae2764f5a0ce68d02ca33b0b9d319e5b86675d1896b9f199ea0e88fb535a.js"></script>'
     def test_compile_file(self, tmpdir):
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dir=[str(tmpdir)]))
