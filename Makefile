@@ -2,7 +2,7 @@ test: clean
 	py.test ${ARGS}
 
 coverage:
-	$(MAKE) test ARGS="--cov=jac ${ARGS}"
+	$(MAKE) test ARGS="--cov=jac --cov=tests ${ARGS}"
 
 clean:
 	@find . -iname '*.pyc' -delete
