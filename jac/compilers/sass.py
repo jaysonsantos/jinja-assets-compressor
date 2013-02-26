@@ -8,8 +8,12 @@ class SassCompiler(object):
     supported_mimetypes = ['text/sass', 'text/scss']
 
     @classmethod
-    def compile(cls, what):
-        handler = subprocess.Popen(['sass', '-s'], stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+    def compile(cls, what, mimetype='text/sass'):
+        args = ['sass', '-s']
+        if mimetype == 'text/scss':
+            args.append('--scss')
+
+        handler = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
 
         handler.stdin.write(what)

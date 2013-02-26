@@ -2,6 +2,10 @@ compilers = {}
 
 
 class CompilerMeta(type):
+    """
+    Register a compiler and ensure that will only be one compiler
+    by mimetype.
+    """
     def __new__(meta, name, bases, attrs):
         cls = type.__new__(meta, name, bases, attrs)
         for m in attrs['supported_mimetypes']:
@@ -22,7 +26,7 @@ def compile(what, mimetype):
     except KeyError:
         raise RuntimeError('Compiler for mimetype %s not found.' % mimetype)
 
-    return compiler.compile(what)
+    return compiler.compile(what, mimetype.lower())
 
 
 from .sass import SassCompiler
