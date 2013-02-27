@@ -19,6 +19,6 @@ def static_finder(app):
 
 def patch_app(app):
     app.jinja_env.add_extension('jac.CompilerExtension')
-    app.jinja_env.compressor_output_dir = app.config['COMPRESSOR_OUTPUT_DIR']
-    app.jinja_env.compressor_static_prefix = app.config['COMPRESSOR_STATIC_PREFIX']
+    app.jinja_env.compressor_output_dir = app.static_folder
+    app.jinja_env.compressor_static_prefix = app.static_url_path
     app.jinja_env.compressor_source_dirs = static_finder(app)
