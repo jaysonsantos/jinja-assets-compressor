@@ -49,7 +49,7 @@ alert("Hi");
 
     def test_render(self, env, html_template):
         template = env.from_string(html_template)
-        expected = '<link type="text/css" rel="stylesheet" href="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
+        expected = '<link type="text/css" rel="stylesheet" href="/static/c280e1cd5668088561df91a053f7ba19c1d4e333e2e4c5506748e2c2bc1b2fc7.css" />'
 
         assert expected == template.render()
 
@@ -57,7 +57,7 @@ alert("Hi");
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
 
-        assert ext._compile('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/761b879c0b499a9d7e48a152fa5aa91efb66ee2455e025e673fd9001ab27ca73.css" />'
+        assert ext._compile('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/c280e1cd5668088561df91a053f7ba19c1d4e333e2e4c5506748e2c2bc1b2fc7.css" />'
 
     def test_compile_js(self, tmpdir, html_js):
         from jac import CompilerExtension
