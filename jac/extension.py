@@ -100,9 +100,9 @@ class CompilerExtension(Extension):
             if c.get('type') is None:
                 raise RuntimeError('Tags to be compressed must have a compression_type.')
 
-            src = str(c.get('src') or c.get('href'))
+            src = c.get('src') or c.get('href')
             if src:
-                src = open(self._find_file(src), 'rb')
+                src = open(self._find_file(str(src)), 'rb')
             else:
                 src = c.string
 
