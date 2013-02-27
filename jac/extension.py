@@ -43,10 +43,21 @@ class CompilerExtension(Extension):
             raise RuntimeError('Unsupported type of compression %s' % type)
 
     def _find_file(self, path):
-        for d in self.environment.compressor_source_dir:
-            filename = os.path.join(d, path)
+        if callable(self.environment.compressor_source_dirs):
+            filename = self.environment.compressor_source_dirs(path)
+            print filename
             if os.path.exists(filename):
                 return filename
+        else:
+            if isinstance(self.environment.compressor_source_dirs, basestring):
+                dirs = [self.environment.compressor_source_dirs]
+            else:
+                dirs = self.environment.compressor_source_dirs
+
+            for d in dirs:
+                filename = os.path.join(d, path)
+                if os.path.exists(filename):
+                    return filename
 
         raise IOError(2, 'File not found %s' % path)
 
@@ -54,8 +65,8 @@ class CompilerExtension(Extension):
         html_hash = hashlib.sha256(html)
 
         for c in compilables:
-            if c.get('src'):
-                with open(self._find_file(c['src']), 'rb') as f:
+            if c.get('src') or c.get('href'):
+                with open(self._find_file(str(c.get('src') or c.get('href'))), 'rb') as f:
                     while True:
                         content = f.read(1024)
                         if content:
@@ -90,7 +101,7 @@ class CompilerExtension(Extension):
             if c.get('type') is None:
                 raise RuntimeError('Tags to be compressed must have a compression_type.')
 
-            src = c.get('src')
+            src = str(c.get('src') or c.get('href'))
             if src:
                 src = open(self._find_file(src), 'rb')
             else:
