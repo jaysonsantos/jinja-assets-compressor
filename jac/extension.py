@@ -12,14 +12,14 @@ class CompilerExtension(Extension):
     tags = set(['compress'])
 
     def parse(self, parser):
-        parser.stream.next()
+        lineno = parser.stream.next().lineno
         args = [parser.parse_expression()]
         body = parser.parse_statements(['name:endcompress'], drop_needle=True)
 
         if len(body) > 1:
             raise RuntimeError('One tag supported for now.')
 
-        return nodes.CallBlock(self.call_method('_compile', args), [], [], body)
+        return nodes.CallBlock(self.call_method('_compile', args), [], [], body).set_lineno(lineno)
 
     def _find_compilable_tags(self, soup):
         for link in soup.find_all('link'):
