@@ -5,6 +5,11 @@ jinja-assets-compressor
 
 A Jinja extension to compile and/or compress your assets.
 
+# Installing
+```
+pip install jac
+```
+
 # Usage
 To use it, you just have to put your css or js inside a compress tag.
 ```html
