@@ -19,7 +19,7 @@ sass stuff
 coffee stuff
 </script>
 <script type="text/coffescript" src="file.coffee"></script>
-{% endcompres %}
+{% endcompress %}
 ```
 
 ## Configuring Jinja
@@ -29,6 +29,7 @@ You just have to create an environment with jac on it and configure output dir, 
 import jinja2
 
 from jac import CompilerExtension
+
 env = jinja2.Environment(extensions=[CompilerExtension])
 env.compressor_output_dir = tmpdir
 env.compressor_static_prefix = '/static'
@@ -39,8 +40,9 @@ After that just use `template = env.from_string(html); template.render()` to get
 ## Configuring Flask
 Where you configure your app, just do this:
 ```python
-app = Flask(__name__)
 from jac.frameworks.flask import configure_app
+
+app = Flask(__name__)
 configure_app(app)
 ```
 And you are done.
