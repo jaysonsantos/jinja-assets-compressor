@@ -7,3 +7,4 @@ coverage:
 clean:
 	@find . -iname '*.pyc' -delete
 	@find . -iname '*.pyo' -delete
+	@rm -rf build/ dist/
