@@ -3,12 +3,16 @@ def static_finder(app):
         import os
 
         for rule in app.url_map.iter_rules():
-            (blueprint, view) = rule.endpoint.split('.')
-            blueprint = app.blueprints[blueprint]
+            if '.' in rule.endpoint:
+                (blueprint, view) = rule.endpoint.split('.')
+                blueprint = app.blueprints[blueprint]
 
-            data = rule.match('%s|%s' % (blueprint.subdomain or '', path))
+                data = rule.match('%s|%s' % (blueprint.subdomain or '', path))
+            else:
+                data = rule.match('|%s' % path)
+
             if data:
-                return os.path.join(blueprint.static_folder, data['filename'])
+                return os.path.join(app.static_folder, data['filename'])
 
         raise IOError(2, 'File not found %s.' % path)
 
