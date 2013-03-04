@@ -112,7 +112,7 @@ class CompilerExtension(Extension):
             if c['type'].lower() in ('text/css', 'text/javascript'):
                 text += self._get_contents(src)
             else:
-                text += compile(self._get_contents(src), c['type'])
+                text += compile(self._get_contents(src), c['type'], os.path.dirname(str(c.get('src') or c.get('href'))))
 
         with open(cached_file, 'w') as f:
             f.write(text)
