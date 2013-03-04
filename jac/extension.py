@@ -103,8 +103,10 @@ class CompilerExtension(Extension):
             src = c.get('src') or c.get('href')
             if src:
                 src = open(self._find_file(str(src)), 'rb')
+                cwd = os.path.dirname(src.name)
             else:
                 src = c.string
+                cwd = None
 
             if c.name == 'link' and c.get('rel', [''])[0].lower() != 'stylesheet':
                 text += self._get_contents(src)
@@ -112,9 +114,10 @@ class CompilerExtension(Extension):
             if c['type'].lower() in ('text/css', 'text/javascript'):
                 text += self._get_contents(src)
             else:
-                text += compile(self._get_contents(src), c['type'], os.path.dirname(str(c.get('src') or c.get('href'))))
+                text += compile(self._get_contents(src), c['type'], cwd=cwd)
 
         with open(cached_file, 'w') as f:
             f.write(text)
 
         return self._render_block(cached_file, compression_type)
+

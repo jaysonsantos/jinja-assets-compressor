@@ -26,7 +26,8 @@ def compile(what, mimetype, cwd=None):
     except KeyError:
         raise RuntimeError('Compiler for mimetype %s not found.' % mimetype)
 
-    return compiler.compile(what, mimetype.lower(), cwd=None)
+    return compiler.compile(what, mimetype.lower(), cwd=cwd)
 
 
 from .sass import SassCompiler
+
