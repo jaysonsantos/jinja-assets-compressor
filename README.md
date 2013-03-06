@@ -3,7 +3,7 @@
 jinja-assets-compressor
 =======================
 
-A Jinja extension to compile and/or compress your assets.
+A Jinja2 extension to compile and/or compress your assets.
 
 # Installing
 ```
