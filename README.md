@@ -45,9 +45,9 @@ After that just use `template = env.from_string(html); template.render()` to get
 ## Configuring Flask
 Where you configure your app, just do this:
 ```python
-from jac.frameworks.flask import configure_app
+from jac.frameworks.flask import JAC
 
 app = Flask(__name__)
-configure_app(app)
+jac = JAC(app)
 ```
 And you are done.

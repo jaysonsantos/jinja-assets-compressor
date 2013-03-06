@@ -21,8 +21,36 @@ def static_finder(app):
     return find
 
 
-def configure_app(app):
-    app.jinja_env.add_extension('jac.CompilerExtension')
-    app.jinja_env.compressor_output_dir = app.static_folder
-    app.jinja_env.compressor_static_prefix = app.static_url_path
-    app.jinja_env.compressor_source_dirs = static_finder(app)
+class JAC(object):
+    """Simple helper class for Jinja Assets Compressor. Has to be created in
+    advance like a :class:`~flask.Flask` object.
+
+    There are two usage modes which work very similar.  One is binding
+    the instance to a very specific Flask application::
+
+        app = Flask(__name__)
+        jac = JAC(app)
+
+    The second possibility is to create the object once and configure the
+    application later to support it::
+
+        jac = JAC()
+
+        def create_app():
+            app = Flask(__name__)
+            jac.init_app(app)
+            return app
+
+    :param app: the application to register.
+    """
+
+    def __init__(self, app=None):
+        self.app = app
+        if app is not None:
+            self.init_app(app)
+
+    def init_app(self, app):
+        app.jinja_env.add_extension('jac.CompilerExtension')
+        app.jinja_env.compressor_output_dir = app.static_folder
+        app.jinja_env.compressor_static_prefix = app.static_url_path
+        app.jinja_env.compressor_source_dirs = static_finder(app)
