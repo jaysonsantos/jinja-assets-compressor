@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from jac.frameworks.flask import JAC, static_finder
+from jac.contrib.flask import JAC, static_finder
 import mock
 import pytest
 
