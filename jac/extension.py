@@ -92,6 +92,9 @@ class CompilerExtension(Extension):
 
         html_hash = self._make_hash(html, self._find_compilable_tags(soup))
 
+        if not os.path.exists(str(self.environment.compressor_output_dir)):
+            os.makedirs(str(self.environment.compressor_output_dir))
+
         cached_file = os.path.join(str(self.environment.compressor_output_dir),
                                    '%s.%s') % (html_hash, compression_type)
 
