@@ -46,7 +46,6 @@ class CompilerExtension(Extension):
     def _find_file(self, path):
         if callable(self.environment.compressor_source_dirs):
             filename = self.environment.compressor_source_dirs(path)
-            # print filename
             if os.path.exists(filename):
                 return filename
         else:

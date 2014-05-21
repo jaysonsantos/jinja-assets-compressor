@@ -3,7 +3,7 @@ def static_finder(app):
         import os
 
         for rule in app.url_map.iter_rules():
-            if '.' in rule.endpoint:
+            if '.' in rule.endpoint and not app.jinja_env.compressor_ignore_blueprint_prefix:
                 with_blueprint = True
                 (blueprint, view) = rule.endpoint.split('.')
                 blueprint = app.blueprints[blueprint]
@@ -53,4 +53,5 @@ class JAC(object):
         app.jinja_env.add_extension('jac.CompilerExtension')
         app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or app.static_folder
         app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or app.static_url_path
+        app.jinja_env.compressor_ignore_blueprint_prefix = app.config.get('COMPRESSOR_IGNORE_BLUEPRINT_PREFIX') or False
         app.jinja_env.compressor_source_dirs = static_finder(app)
