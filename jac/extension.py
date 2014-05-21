@@ -29,6 +29,8 @@ class CompilerExtension(Extension):
             yield style
 
         for script in soup.find_all('script'):
+            if script.get('type') is None:
+                script['type'] = 'text/javascript'
             yield script
 
     def _render_block(self, filename, type):
