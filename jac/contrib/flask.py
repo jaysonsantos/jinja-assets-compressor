@@ -51,6 +51,6 @@ class JAC(object):
 
     def init_app(self, app):
         app.jinja_env.add_extension('jac.CompilerExtension')
-        app.jinja_env.compressor_output_dir = app.static_folder
-        app.jinja_env.compressor_static_prefix = app.static_url_path
+        app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or app.static_folder
+        app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or app.static_url_path
         app.jinja_env.compressor_source_dirs = static_finder(app)
