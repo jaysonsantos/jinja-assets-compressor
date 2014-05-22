@@ -55,6 +55,7 @@ Where you configure your app, just do this:
 from jac.contrib.flask import JAC
 
 app = Flask(__name__)
+app.config['COMPRESSOR_DEBUG'] = app.config.get('DEBUG')
 jac = JAC(app)
 ```
 And you are done.
