@@ -9,6 +9,13 @@ A Jinja2 extension to compile and/or compress your assets.
 ```
 pip install jac
 ```
+For LESS support, install [less](https://www.npmjs.org/package/less):<br />
+`npm install -g less`
+
+For Sass and SCSS support, install [sass](https://rubygems.org/gems/sass):<br />
+`gem install sass`
+
+JavaScript minification is built-in using the Python [rJsmin](https://pypi.python.org/pypi/rjsmin) package.
 
 # Usage
 To use it, you just have to put your css or js inside a compress tag.
