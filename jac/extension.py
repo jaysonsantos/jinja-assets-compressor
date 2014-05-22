@@ -112,12 +112,7 @@ class CompilerExtension(Extension):
                 src = c.string
                 cwd = None
 
-            if c.name == 'link' and c.get('rel', [''])[0].lower() != 'stylesheet':
-                text += self._get_contents(src)
-            elif c['type'].lower() in ('text/css', 'text/javascript'):
-                text += self._get_contents(src)
-            else:
-                text += compile(self._get_contents(src), c['type'], cwd=cwd)
+            text += compile(self._get_contents(src), c['type'], cwd=cwd)
 
         with open(cached_file, 'w') as f:
             f.write(text)

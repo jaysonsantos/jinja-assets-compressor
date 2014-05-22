@@ -19,10 +19,8 @@ class SassCompiler(object):
         handler = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
                                    stderr=subprocess.PIPE, cwd=None)
 
-        handler.stdin.write(what)
-        handler.stdin.close()
-        if handler.wait() == 0:
-            return handler.stdout.read()
+        (stdout, stderr) = handler.communicate(input=what)
+        if handler.returncode == 0:
+            return stdout
         else:
-            raise RuntimeError('Test this :S %s' % handler.stderr.read())
-
+            raise RuntimeError('Test this :S %s' % stderr)

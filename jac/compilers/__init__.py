@@ -31,4 +31,4 @@ def compile(what, mimetype, cwd=None):
 
 from .sass import SassCompiler
 from .less import LessCompiler
-
+from .javascript import JavaScriptCompiler
