@@ -103,6 +103,7 @@ class CompilerExtension(Extension):
         soup = BeautifulSoup(html)
         compilables = self._find_compilable_tags(soup)
         outdir = str(self.environment.compressor_output_dir)
+        static_prefix = str(self.environment.compressor_static_prefix)
         assets = OrderedDict()
 
         html_hash = self._make_hash(html, self._find_compilable_tags(soup))
@@ -124,18 +125,19 @@ class CompilerExtension(Extension):
             src = c.get('src') or c.get('href')
             if src:
                 filename = os.path.basename(str(src)).split('.', 1)[0]
+                uri_cwd = os.path.join(static_prefix, os.path.dirname(str(src)))
                 src = open(self._find_file(str(src)), 'rb')
                 cwd = os.path.dirname(src.name)
             else:
+                uri_cwd = None
                 filename = 'inline{}'.format(count)
                 src = c.string
                 cwd = None
 
-            needs_compile = not (c['type'] == 'text/javascript'
-                                 or c['type'] == 'text/css')
-
+            needs_compile = c['type'] != 'text/javascript'
             if not debug or needs_compile:
-                text = compile(self._get_contents(src), c['type'], cwd=cwd)
+                text = compile(self._get_contents(src), c['type'], cwd=cwd,
+                               uri_cwd=uri_cwd, debug=debug)
             else:
                 text = self._get_contents(src)
 

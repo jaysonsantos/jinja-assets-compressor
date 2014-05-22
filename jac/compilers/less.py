@@ -8,8 +8,23 @@ class LessCompiler(object):
     supported_mimetypes = ['text/less', 'text/css']
 
     @classmethod
-    def compile(cls, what, mimetype='text/less', cwd=None):
-        args = ['lessc', '--compress', '-']
+    def compile(cls, what, mimetype='text/less', cwd=None, uri_cwd=None,
+                debug=None):
+        args = ['lessc']
+
+        if not debug:
+            args += ['--compress']
+
+        if cwd:
+            args += ['-ru']
+            args += ['--include-path={}'.format(cwd)]
+
+        if uri_cwd:
+            if not uri_cwd.endswith('/'):
+                uri_cwd += '/'
+            args += ['--rootpath={}'.format(uri_cwd)]
+
+        args += ['-']
 
         handler = subprocess.Popen(args, stdout=subprocess.PIPE,
                                    stdin=subprocess.PIPE,

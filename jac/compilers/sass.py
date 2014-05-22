@@ -8,7 +8,8 @@ class SassCompiler(object):
     supported_mimetypes = ['text/sass', 'text/scss']
 
     @classmethod
-    def compile(cls, what, mimetype='text/sass', cwd=None):
+    def compile(cls, what, mimetype='text/sass', cwd=None,
+                uri_cwd=None, debug=None):
         args = ['sass', '-s']
         if mimetype == 'text/scss':
             args.append('--scss')

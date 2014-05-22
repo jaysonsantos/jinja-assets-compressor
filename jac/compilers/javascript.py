@@ -8,5 +8,6 @@ class JavaScriptCompiler(object):
     supported_mimetypes = ['text/javascript']
 
     @classmethod
-    def compile(cls, what, mimetype='text/javascript', cwd=None):
+    def compile(cls, what, mimetype='text/javascript', cwd=None,
+                uri_cwd=None, debug=None):
         return jsmin(what)
