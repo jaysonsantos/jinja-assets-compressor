@@ -6,9 +6,7 @@ setup(
     author_email='santosdosreis@gmail.com',
     version='0.10',
     packages=find_packages(exclude=('tests*', )),
-    install_requires=[
-        'beautifulsoup4',
-    ],
+    install_requires=open('requirements.txt').readlines(),
     description='A Jinja extension (compatible with Flask and other frameworks) to compile and/or compress your assets.',
     url='https://github.com/jaysonsantos/jinja-assets-compressor',
     classifiers=[
