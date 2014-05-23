@@ -1,3 +1,4 @@
 Jinja2
 beautifulsoup4==4.3.2
 rjsmin==1.0.9
+ordereddict==1.1
