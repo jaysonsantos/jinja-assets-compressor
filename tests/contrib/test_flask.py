@@ -22,6 +22,7 @@ def test_flask_extension_jinja_env_add_extension(mocked_flask_app):
 
 def test_flask_extension_jinja_env_compressor_output_dir(mocked_flask_app):
     mocked_flask_app.static_folder = '/static/folder'
+    mocked_flask_app.config = dict()
 
     ext = JAC()
     ext.init_app(mocked_flask_app)
@@ -30,6 +31,7 @@ def test_flask_extension_jinja_env_compressor_output_dir(mocked_flask_app):
 
 def test_flask_extension_jinja_env_static_prefix(mocked_flask_app):
     mocked_flask_app.static_url_path = '/static-url'
+    mocked_flask_app.config = dict()
 
     ext = JAC()
     ext.init_app(mocked_flask_app)

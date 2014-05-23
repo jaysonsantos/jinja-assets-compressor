@@ -93,12 +93,12 @@ class CompilerExtension(Extension):
         html = caller()
 
         enabled = (not hasattr(self.environment, 'compressor_enabled') or
-                        self.environment.compressor_enabled)
+                        self.environment.compressor_enabled is not False)
         if not enabled:
             return html
 
         debug = (hasattr(self.environment, 'compressor_debug') and
-                      self.environment.compressor_debug)
+                      self.environment.compressor_debug is True)
         compression_type = compression_type.lower()
         soup = BeautifulSoup(html)
         compilables = self._find_compilable_tags(soup)
