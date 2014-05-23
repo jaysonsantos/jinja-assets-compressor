@@ -130,7 +130,7 @@ class CompilerExtension(Extension):
                 cwd = os.path.dirname(src.name)
             else:
                 uri_cwd = None
-                filename = 'inline{}'.format(count)
+                filename = 'inline{0}'.format(count)
                 src = c.string
                 cwd = None
 
