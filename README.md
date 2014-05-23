@@ -17,6 +17,9 @@ For Sass and SCSS support, install [sass](https://rubygems.org/gems/sass):<br />
 
 JavaScript minification is built-in using the Python [rJsmin](https://pypi.python.org/pypi/rjsmin) package.
 
+When installing on Mac OS X set this shell variable, because jac dependencies contain C code:<br />
+`export CFLAGS=-Qunused-arguments`
+
 # Usage
 To use it, you just have to put your css or js inside a compress tag.
 ```html
