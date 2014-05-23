@@ -2,7 +2,7 @@ import pytest
 import jac
 
 
-class TestCompiling:
+class TestSass:
     @pytest.fixture
     def sample_sass(self):
         """
@@ -33,3 +33,23 @@ $margin: 16px
 """
 
         assert jac.compile(sample_sass, 'text/sass') == compiled_css
+
+
+class TestLess:
+    @pytest.fixture
+    def sample_less(self):
+        """
+        Returns a simple LESS script for testing
+        """
+
+        return '''
+            body {
+              .test-class {
+                color: #fff;
+              }
+            }
+        '''
+
+    def test_compiling(self, sample_less):
+        compiled_css = 'body .test-class{color:#fff}'
+        assert jac.compile(sample_less, 'text/less') == compiled_css
