@@ -16,7 +16,7 @@ class CompilerMeta(type):
         return cls
 
 
-def compile(what, mimetype, cwd=None):
+def compile(what, mimetype, cwd=None, uri_cwd=None, debug=None):
     """
     Compile a given text based on mimetype.
     """
@@ -26,8 +26,10 @@ def compile(what, mimetype, cwd=None):
     except KeyError:
         raise RuntimeError('Compiler for mimetype %s not found.' % mimetype)
 
-    return compiler.compile(what, mimetype.lower(), cwd=cwd)
+    return compiler.compile(what, mimetype.lower(), cwd=cwd,
+                            uri_cwd=uri_cwd, debug=debug)
 
 
 from .sass import SassCompiler
-
+from .less import LessCompiler
+from .javascript import JavaScriptCompiler
