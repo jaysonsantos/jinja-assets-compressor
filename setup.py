@@ -4,7 +4,7 @@ setup(
     name='jac',
     author='Jayson Reis',
     author_email='santosdosreis@gmail.com',
-    version='0.9',
+    version='0.10',
     packages=find_packages(exclude=('tests*', )),
     install_requires=[
         'beautifulsoup4',
