@@ -8,9 +8,9 @@ from jinja2.ext import Extension
 from jac import compile
 
 try:
-    from collections import OrderedDict
+    from collections import OrderedDict # Python >= 2.7
 except ImportError:
-    from jac.compat.ordereddict import OrderedDict
+    from ordereddict import OrderedDict # Python 2.6
 
 
 class CompilerExtension(Extension):
