@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import hashlib
 import os
 
@@ -6,6 +8,7 @@ from jinja2 import nodes
 from jinja2.ext import Extension
 
 from jac import compile
+from jac.compat import u, open
 
 try:
     from collections import OrderedDict # Python >= 2.7
@@ -44,9 +47,9 @@ class CompilerExtension(Extension):
         filename = '%s/%s' % (self.environment.compressor_static_prefix, os.path.basename(filename))
 
         if type.lower() == 'css':
-            return '<link type="text/css" rel="stylesheet" href="%s" />' % filename
+            return u('<link type="text/css" rel="stylesheet" href="%s" />' % filename)
         elif type.lower() == 'js':
-            return '<script type="text/javascript" src="%s"></script>' % filename
+            return u('<script type="text/javascript" src="%s"></script>' % filename)
         else:
             raise RuntimeError('Unsupported type of compression %s' % type)
 
@@ -73,7 +76,7 @@ class CompilerExtension(Extension):
 
         for c in compilables:
             if c.get('src') or c.get('href'):
-                with open(self._find_file(str(c.get('src') or c.get('href'))), 'rb') as f:
+                with open(self._find_file(u(c.get('src') or c.get('href'))), 'rb') as f:
                     while True:
                         content = f.read(1024)
                         if content:
@@ -102,16 +105,16 @@ class CompilerExtension(Extension):
         compression_type = compression_type.lower()
         soup = BeautifulSoup(html)
         compilables = self._find_compilable_tags(soup)
-        outdir = str(self.environment.compressor_output_dir)
-        static_prefix = str(self.environment.compressor_static_prefix)
+        outdir = u(self.environment.compressor_output_dir)
+        static_prefix = u(self.environment.compressor_static_prefix)
         assets = OrderedDict()
 
         html_hash = self._make_hash(html, self._find_compilable_tags(soup))
 
-        if not os.path.exists(str(self.environment.compressor_output_dir)):
-            os.makedirs(str(self.environment.compressor_output_dir))
+        if not os.path.exists(u(self.environment.compressor_output_dir)):
+            os.makedirs(u(self.environment.compressor_output_dir))
 
-        cached_file = os.path.join(str(self.environment.compressor_output_dir),
+        cached_file = os.path.join(u(self.environment.compressor_output_dir),
                                    '%s.%s') % (html_hash, compression_type)
 
         if os.path.exists(cached_file):
@@ -124,9 +127,9 @@ class CompilerExtension(Extension):
 
             src = c.get('src') or c.get('href')
             if src:
-                filename = os.path.basename(str(src)).split('.', 1)[0]
-                uri_cwd = os.path.join(static_prefix, os.path.dirname(str(src)))
-                src = open(self._find_file(str(src)), 'rb')
+                filename = os.path.basename(u(src)).split('.', 1)[0]
+                uri_cwd = os.path.join(static_prefix, os.path.dirname(u(src)))
+                src = open(self._find_file(u(src)), 'rb')
                 cwd = os.path.dirname(src.name)
             else:
                 uri_cwd = None
@@ -140,6 +143,7 @@ class CompilerExtension(Extension):
                                uri_cwd=uri_cwd, debug=debug)
             else:
                 text = self._get_contents(src)
+            text = u(text)
 
             if not debug:
                 outfile = cached_file
@@ -148,14 +152,14 @@ class CompilerExtension(Extension):
                           filename, compression_type)
 
             if assets.get(outfile) is None:
-                assets[outfile] = ''
-            assets[outfile] += text
+                assets[outfile] = u('')
+            assets[outfile] += u("\n") + text
 
             count += 1
 
-        blocks = ''
+        blocks = u('')
         for outfile, asset in assets.items():
-            with open(outfile, 'w') as f:
+            with open(outfile, 'w', encoding='utf-8') as f:
                 f.write(asset)
             blocks += self._render_block(outfile, compression_type)
 
