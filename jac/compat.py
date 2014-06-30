@@ -10,9 +10,9 @@ is_py3 = (sys.version_info[0] == 3)
 if is_py2:
 
     def _u(text):
-        if type(text) != unicode:
+        if type(text) == str:
             return text.decode('utf-8')
-        return text
+        return unicode(text)
     u = _u
     open = codecs.open
 
