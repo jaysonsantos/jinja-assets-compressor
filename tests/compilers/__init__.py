@@ -1,10 +1,7 @@
-try:
-    import cStringIO as StringIO
-except ImportError:  # pragma: nocover
-    import StringIO  # pragma: nocover
-
 import mock
 import pytest
+
+from six import StringIO
 
 
 class BaseCompilerTest:

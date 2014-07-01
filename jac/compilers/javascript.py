@@ -1,10 +1,10 @@
 from rjsmin import jsmin
+from six import with_metaclass
 
 from . import CompilerMeta
 
 
-class JavaScriptCompiler(object):
-    __metaclass__ = CompilerMeta
+class JavaScriptCompiler(with_metaclass(CompilerMeta, object)):
     supported_mimetypes = ['text/javascript']
 
     @classmethod

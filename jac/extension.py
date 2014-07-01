@@ -8,7 +8,7 @@ from jinja2 import nodes
 from jinja2.ext import Extension
 
 from jac import compile
-from jac.compat import u, open
+from jac.compat import u, open, basestring, file
 
 try:
     from collections import OrderedDict # Python >= 2.7
@@ -20,7 +20,7 @@ class CompilerExtension(Extension):
     tags = set(['compress'])
 
     def parse(self, parser):
-        lineno = parser.stream.next().lineno
+        lineno = next(parser.stream).lineno
         args = [parser.parse_expression()]
         body = parser.parse_statements(['name:endcompress'], drop_needle=True)
 
@@ -72,15 +72,15 @@ class CompilerExtension(Extension):
         raise IOError(2, 'File not found %s' % path)
 
     def _make_hash(self, html, compilables):
-        html_hash = hashlib.sha256(html)
+        html_hash = hashlib.sha256(html.encode('utf-8'))
 
         for c in compilables:
             if c.get('src') or c.get('href'):
-                with open(self._find_file(u(c.get('src') or c.get('href'))), 'rb') as f:
+                with open(self._find_file(u(c.get('src') or c.get('href'))), 'r', encoding='utf-8') as f:
                     while True:
                         content = f.read(1024)
                         if content:
-                            html_hash.update(content)
+                            html_hash.update(content.encode('utf-8'))
                         else:
                             break
 
@@ -129,7 +129,7 @@ class CompilerExtension(Extension):
             if src:
                 filename = os.path.basename(u(src)).split('.', 1)[0]
                 uri_cwd = os.path.join(static_prefix, os.path.dirname(u(src)))
-                src = open(self._find_file(u(src)), 'rb')
+                src = open(self._find_file(u(src)), 'r', encoding='utf-8')
                 cwd = os.path.dirname(src.name)
             else:
                 uri_cwd = None
