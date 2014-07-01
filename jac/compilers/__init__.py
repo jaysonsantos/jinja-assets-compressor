@@ -8,7 +8,7 @@ class CompilerMeta(type):
     """
     def __new__(meta, name, bases, attrs):
         cls = type.__new__(meta, name, bases, attrs)
-        for m in attrs['supported_mimetypes']:
+        for m in attrs.get('supported_mimetypes', []):
             if m in compilers:
                 raise RuntimeError('For now, just one compiler by mimetype')
             compilers[m] = cls
