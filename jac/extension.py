@@ -72,7 +72,7 @@ class CompilerExtension(Extension):
         raise IOError(2, 'File not found %s' % path)
 
     def _make_hash(self, html, compilables):
-        html_hash = hashlib.sha256(html.encode('utf-8'))
+        html_hash = hashlib.md5(html.encode('utf-8'))
 
         for c in compilables:
             if c.get('src') or c.get('href'):
