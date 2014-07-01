@@ -53,7 +53,7 @@ alert("Hi");
 
     def test_render(self, env, html_template):
         template = env.from_string(html_template)
-        expected = '<link type="text/css" rel="stylesheet" href="/static/c280e1cd5668088561df91a053f7ba19c1d4e333e2e4c5506748e2c2bc1b2fc7.css" />'
+        expected = '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
 
         assert expected == template.render()
 
@@ -61,13 +61,13 @@ alert("Hi");
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
 
-        assert ext._compile('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/c280e1cd5668088561df91a053f7ba19c1d4e333e2e4c5506748e2c2bc1b2fc7.css" />'
+        assert ext._compile('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
 
     def test_compile_js(self, tmpdir, html_js):
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
 
-        assert ext._compile('js', mock.Mock(return_value=html_js)) == '<script type="text/javascript" src="/static/adbdae2764f5a0ce68d02ca33b0b9d319e5b86675d1896b9f199ea0e88fb535a.js"></script>'
+        assert ext._compile('js', mock.Mock(return_value=html_js)) == '<script type="text/javascript" src="/static/0749ffbc6e886a3a01ee6e6c15efc779.js"></script>'
 
     def test_compile_file(self, tmpdir):
         from jac import CompilerExtension
@@ -88,4 +88,4 @@ $margin: 16px
 
         html = '<link type="text/sass" rel="stylesheet" src="test.sass" />'
 
-        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/331d363d3c3cbf5a22f29e190596f996d37e0777e7d3173240801236ee9eb8c7.css" />'
+        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/e287a109d5df3e4621efec8e3e63d520.css" />'
