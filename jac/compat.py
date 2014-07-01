@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import codecs
+import io
 import sys
 
 
@@ -15,8 +16,12 @@ if is_py2:
         return unicode(text)
     u = _u
     open = codecs.open
+    basestring = basestring
+    file = (file, codecs.Codec, codecs.StreamReaderWriter)
 
 elif is_py3:
 
     u = str
     open = open
+    basestring = (str, bytes)
+    file = io.IOBase

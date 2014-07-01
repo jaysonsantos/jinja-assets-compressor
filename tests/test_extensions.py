@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import os
 
 import mock
 import pytest
 
 import jinja2
+
+from jac.compat import u, open
 
 
 class TestCompression:
@@ -69,7 +73,7 @@ alert("Hi");
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[str(tmpdir)]))
 
-        with open(os.path.join(str(tmpdir), 'test.sass'), 'wb') as f:
+        with open(os.path.join(str(tmpdir), 'test.sass'), 'w', encoding='utf-8') as f:
             f.write('''$blue: #3bbfce
 $margin: 16px
 
