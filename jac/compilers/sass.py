@@ -1,7 +1,7 @@
 import subprocess
 from six import with_metaclass
 
-from jac.compat import file
+from jac.compat import file, u
 
 from . import CompilerMeta
 
@@ -27,6 +27,7 @@ class SassCompiler(with_metaclass(CompilerMeta, object)):
         if isinstance(what, file):
             what = what.read()
         (stdout, stderr) = handler.communicate(input=what)
+        stdout = u(stdout)
 
         if handler.returncode == 0:
             return stdout

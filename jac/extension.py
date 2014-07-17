@@ -88,9 +88,9 @@ class CompilerExtension(Extension):
 
     def _get_contents(self, src):
         if isinstance(src, file):
-            return src.read()
+            return u(src.read())
         else:
-            return src
+            return u(src)
 
     def _compile(self, compression_type, caller):
         html = caller()
@@ -143,7 +143,6 @@ class CompilerExtension(Extension):
                                uri_cwd=uri_cwd, debug=debug)
             else:
                 text = self._get_contents(src)
-            text = u(text)
 
             if not debug:
                 outfile = cached_file
