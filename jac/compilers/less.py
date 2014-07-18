@@ -1,7 +1,7 @@
 import subprocess
 from six import with_metaclass
 
-from jac.compat import file, u
+from jac.compat import file, u, utf8_encode
 
 from . import CompilerMeta
 
@@ -28,14 +28,14 @@ class LessCompiler(with_metaclass(CompilerMeta, object)):
 
         args += ['-']
 
-        handler = subprocess.Popen(args, universal_newlines=True,
+        handler = subprocess.Popen(args,
                                    stdout=subprocess.PIPE,
                                    stdin=subprocess.PIPE,
                                    stderr=subprocess.PIPE, cwd=None)
 
         if isinstance(what, file):
             what = what.read()
-        (stdout, stderr) = handler.communicate(input=what.encode('utf-8'))
+        (stdout, stderr) = handler.communicate(input=utf8_encode(what))
         stdout = u(stdout)
 
         if handler.returncode == 0:
