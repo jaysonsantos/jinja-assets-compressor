@@ -10,18 +10,28 @@ is_py3 = (sys.version_info[0] == 3)
 
 if is_py2:
 
-    def _u(text):
-        if type(text) == str:
+    def u(text):
+        if isinstance(text, str):
             return text.decode('utf-8')
         return unicode(text)
-    u = _u
+    def utf8_encode(text):
+        if isinstance(text, unicode):
+            return text.encode('utf-8')
+        return text
     open = codecs.open
     basestring = basestring
     file = (file, codecs.Codec, codecs.StreamReaderWriter)
 
 elif is_py3:
 
-    u = str
+    def u(text):
+        if isinstance(text, bytes):
+            return text.decode('utf-8')
+        return str(text)
+    def utf8_encode(text):
+        if isinstance(text, str):
+            return text.encode('utf-8')
+        return text
     open = open
     basestring = (str, bytes)
     file = io.IOBase

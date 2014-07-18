@@ -19,6 +19,9 @@ class CompilerMeta(type):
 def compile(what, mimetype, cwd=None, uri_cwd=None, debug=None):
     """
     Compile a given text based on mimetype.
+
+    The text to compile must be provided as a Unicode object and this
+    function must return the compiled text as a Unicode object.
     """
 
     try:

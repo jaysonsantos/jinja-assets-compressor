@@ -8,7 +8,7 @@ from jinja2 import nodes
 from jinja2.ext import Extension
 
 from jac import compile
-from jac.compat import u, open, basestring, file
+from jac.compat import u, open, basestring, file, utf8_encode
 
 try:
     from collections import OrderedDict # Python >= 2.7
@@ -72,7 +72,7 @@ class CompilerExtension(Extension):
         raise IOError(2, 'File not found %s' % path)
 
     def _make_hash(self, html, compilables):
-        html_hash = hashlib.md5(html.encode('utf-8'))
+        html_hash = hashlib.md5(utf8_encode(html))
 
         for c in compilables:
             if c.get('src') or c.get('href'):
@@ -80,7 +80,7 @@ class CompilerExtension(Extension):
                     while True:
                         content = f.read(1024)
                         if content:
-                            html_hash.update(content.encode('utf-8'))
+                            html_hash.update(utf8_encode(content))
                         else:
                             break
 
@@ -88,9 +88,9 @@ class CompilerExtension(Extension):
 
     def _get_contents(self, src):
         if isinstance(src, file):
-            return src.read()
+            return u(src.read())
         else:
-            return src
+            return u(src)
 
     def _compile(self, compression_type, caller):
         html = caller()
@@ -143,7 +143,6 @@ class CompilerExtension(Extension):
                                uri_cwd=uri_cwd, debug=debug)
             else:
                 text = self._get_contents(src)
-            text = u(text)
 
             if not debug:
                 outfile = cached_file
