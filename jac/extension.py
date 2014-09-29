@@ -77,7 +77,7 @@ class CompilerExtension(Extension):
         for c in compilables:
             if c.get('src') or c.get('href'):
                 stat = os.stat(self._find_file(u(c.get('src') or c.get('href'))))
-                html_hash.update(u('{}-{}'.format(stat.st_size, stat.st_mtime)))
+                html_hash.update(utf8_encode('{}-{}'.format(stat.st_size, stat.st_mtime)))
 
         return html_hash.hexdigest()
 

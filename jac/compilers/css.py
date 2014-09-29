@@ -18,7 +18,7 @@ class CssCompiler(with_metaclass(CompilerMeta, object)):
             what = what.read()
 
         if debug:
-            return utf8_encode(what)
+            return what
 
-        return utf8_encode(compress(what))
+        return compress(what)
 

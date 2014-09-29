@@ -8,7 +8,7 @@ import pytest
 
 import jinja2
 
-from jac.compat import u, open
+from jac.compat import u, open, utf8_encode
 
 
 class TestCompression:
@@ -90,7 +90,7 @@ $margin: 16px
 
         html = '<link type="text/sass" rel="stylesheet" src="test.sass" />'
         stat = os.stat(static_file)
-        expected_hash = hashlib.md5(html)
-        expected_hash.update(u('{}-{}'.format(stat.st_size, stat.st_mtime)))
+        expected_hash = hashlib.md5(utf8_encode(html))
+        expected_hash.update(utf8_encode('{}-{}'.format(stat.st_size, stat.st_mtime)))
 
         assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
