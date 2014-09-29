@@ -13,7 +13,6 @@ class CssCompiler(with_metaclass(CompilerMeta, object)):
     @classmethod
     def compile(cls, what, mimetype='text/css', cwd=None, uri_cwd=None,
                 debug=None):
-        import ipdb;ipdb.set_trace()
 
         if isinstance(what, file):
             what = what.read()
