@@ -1,5 +1,5 @@
 test: clean
-	py.test ${ARGS}
+	py.test tests ${ARGS}
 
 coverage:
 	$(MAKE) test ARGS="--cov=jac --cov=tests ${ARGS}"
