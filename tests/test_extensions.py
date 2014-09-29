@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
 import os
 
 import mock
@@ -72,8 +73,9 @@ alert("Hi");
     def test_compile_file(self, tmpdir):
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[str(tmpdir)]))
+        static_file = os.path.join(str(tmpdir), 'test.sass')
 
-        with open(os.path.join(str(tmpdir), 'test.sass'), 'w', encoding='utf-8') as f:
+        with open(static_file, 'w', encoding='utf-8') as f:
             f.write('''$blue: #3bbfce
 $margin: 16px
 
@@ -87,5 +89,8 @@ $margin: 16px
   border-color: $blue''')
 
         html = '<link type="text/sass" rel="stylesheet" src="test.sass" />'
+        stat = os.stat(static_file)
+        expected_hash = hashlib.md5(html)
+        expected_hash.update(u('{}-{}'.format(stat.st_size, stat.st_mtime)))
 
-        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/e287a109d5df3e4621efec8e3e63d520.css" />'
+        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())

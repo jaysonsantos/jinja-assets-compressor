@@ -76,13 +76,8 @@ class CompilerExtension(Extension):
 
         for c in compilables:
             if c.get('src') or c.get('href'):
-                with open(self._find_file(u(c.get('src') or c.get('href'))), 'r', encoding='utf-8') as f:
-                    while True:
-                        content = f.read(1024)
-                        if content:
-                            html_hash.update(utf8_encode(content))
-                        else:
-                            break
+                stat = os.stat(self._find_file(u(c.get('src') or c.get('href'))))
+                html_hash.update(u('{}-{}'.format(stat.st_size, stat.st_mtime)))
 
         return html_hash.hexdigest()
 
