@@ -120,8 +120,7 @@ class CompilerExtension(Extension):
         if os.path.exists(cached_file):
             return self._render_block(cached_file, compression_type)
 
-        count = 0
-        for c in compilables:
+        for count, c in enumerate(compilables):
             if c.get('type') is None:
                 raise RuntimeError('Tags to be compressed must have a compression_type.')
 
@@ -153,8 +152,6 @@ class CompilerExtension(Extension):
             if assets.get(outfile) is None:
                 assets[outfile] = u('')
             assets[outfile] += u("\n") + text
-
-            count += 1
 
         blocks = u('')
         for outfile, asset in assets.items():
