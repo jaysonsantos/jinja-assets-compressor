@@ -33,6 +33,7 @@ def compile(what, mimetype, cwd=None, uri_cwd=None, debug=None):
                             uri_cwd=uri_cwd, debug=debug)
 
 
+from .css import CssCompiler
 from .sass import SassCompiler
 from .less import LessCompiler
 from .javascript import JavaScriptCompiler
