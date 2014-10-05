@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from six import with_metaclass
 
 from csscompressor import compress

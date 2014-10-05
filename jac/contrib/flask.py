@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 def static_finder(app):
     def find(path):
         import os

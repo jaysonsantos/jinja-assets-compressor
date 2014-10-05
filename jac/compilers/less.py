@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import subprocess
 from six import with_metaclass
 
