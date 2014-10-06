@@ -69,7 +69,7 @@ class Compressor(object):
                 text = c.string
                 cwd = None
 
-            must_compile = c['type'] in ['css/less', 'css/sass', 'text/scss']
+            must_compile = c['type'] in ['text/less', 'text/sass', 'text/scss']
             if not self.config.compressor_debug or must_compile:
                 compressed = compile(self.get_contents(text), c['type'], cwd=cwd,
                                uri_cwd=uri_cwd, debug=self.config.compressor_debug)
