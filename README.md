@@ -56,6 +56,7 @@ After that just use `template = env.from_string(html); template.render()` to get
 
 ## Configuring Flask
 Where you configure your app, just do this:
+
 ```python
 from jac.contrib.flask import JAC
 
@@ -69,8 +70,8 @@ jac = JAC(app)
 And you are done.
 
 # Running Tests
-To run the dev tests:
-```virtualenv venv
+```
+virtualenv venv
 . venv/bin/activate
 pip install -r requirements_tests.txt
 make test
