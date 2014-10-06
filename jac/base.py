@@ -139,6 +139,12 @@ class Compressor(object):
     def find_compilable_tags(self, soup):
         tags = ['link', 'style', 'script']
         for tag in soup.find_all(tags):
+
+            # don't compress externally hosted assets
+            src = tag.get('src') or tag.get('href')
+            if src and (src.startswith('http') or src.startswith('//')):
+                continue
+
             if tag.get('type') is None:
                 if tag.name == 'script':
                     tag['type'] = 'text/javascript'
