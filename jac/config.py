@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-class Config(object):
+class Config(dict):
 
-    defaults = {
+    _defaults = {
         'compressor_enabled': True,
         'compressor_offline_compress': False,
         'compressor_follow_symlinks': False,
@@ -15,11 +15,8 @@ class Config(object):
     }
 
     def __init__(self, **kwargs):
+        self.update(self._defaults)
         self.update(**kwargs)
 
-    def update(self, **kwargs):
-        for key, val in self.defaults.items():
-            self.set(key, kwargs.get(key, self.defaults[key]))
-
-    def set(self, key, val):
-        setattr(self, key, val)
+    def __getattr__(self, key):
+        return self[key]
