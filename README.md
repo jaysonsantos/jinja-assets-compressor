@@ -69,6 +69,7 @@ jac = JAC(app)
 And you are done.
 
 # Running Tests
+To run the dev tests:
 ```virtualenv venv
 . venv/bin/activate
 pip install -r requirements_tests.txt
