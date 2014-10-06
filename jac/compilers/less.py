@@ -9,7 +9,7 @@ from . import CompilerMeta
 
 
 class LessCompiler(with_metaclass(CompilerMeta, object)):
-    supported_mimetypes = ['text/less']
+    supported_mimetypes = ['text/less', 'text/css']
 
     @classmethod
     def compile(cls, what, mimetype='text/less', cwd=None, uri_cwd=None,

@@ -3,4 +3,3 @@ beautifulsoup4==4.3.2
 rjsmin==1.0.9
 ordereddict==1.1
 six==1.8.0
-csscompressor==0.9.3

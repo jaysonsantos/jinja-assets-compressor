@@ -9,15 +9,13 @@ A Jinja2 extension to compile and/or compress your assets.
 ```
 pip install jac
 ```
-For LESS support, install [less](https://www.npmjs.org/package/less):<br />
+For LESS and CSS support, install [less](https://www.npmjs.org/package/less):<br />
 `npm install -g less`
 
 For Sass and SCSS support, install [sass](https://rubygems.org/gems/sass):<br />
 `gem install sass`
 
 JavaScript minification is built-in using the Python [rJsmin](https://pypi.python.org/pypi/rjsmin) package.
-
-CSS minification is built-in using the Python [csscompressor](https://pypi.python.org/pypi/csscompressor) package.
 
 When installing on Mac OS X set this shell variable, because jac dependencies contain C code:<br />
 `export CFLAGS=-Qunused-arguments`
