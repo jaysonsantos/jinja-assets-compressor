@@ -89,15 +89,19 @@ def main():
     env = app.jinja_env
 
     if os.path.exists(env.compressor_output_dir):
-        print('Deleting previously compressed files in {output_dir}'.format(output_dir=env.compressor_output_dir))
+        print('Deleting previously compressed files in {output_dir}'
+              .format(output_dir=env.compressor_output_dir))
         shutil.rmtree(env.compressor_output_dir)
     else:
-        print('No previous compressed files found in {output_dir}'.format(output_dir=env.compressor_output_dir))
+        print('No previous compressed files found in {output_dir}'
+              .format(output_dir=env.compressor_output_dir))
 
     template_dirs = ['my_flask_app/'+x for x in get_template_dirs(app)]
 
-    print('Compressing static assets into {output_dir}'.format(output_dir=env.compressor_output_dir))
-    env.extensions['jac.extension.CompressorExtension'].compressor.offline_compress(env, template_dirs)
+    print('Compressing static assets into {output_dir}'
+          .format(output_dir=env.compressor_output_dir))
+    compressor = env.extensions['jac.extension.CompressorExtension'].compressor
+    compressor.offline_compress(env, template_dirs)
 
     print 'Finished.'
     return 0
