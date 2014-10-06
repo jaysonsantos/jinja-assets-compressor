@@ -17,6 +17,8 @@ For Sass and SCSS support, install [sass](https://rubygems.org/gems/sass):<br />
 
 JavaScript minification is built-in using the Python [rJsmin](https://pypi.python.org/pypi/rjsmin) package.
 
+CSS minification is built-in using the Python [csscompressor](https://pypi.python.org/pypi/csscompressor) package.
+
 When installing on Mac OS X set this shell variable, because jac dependencies contain C code:<br />
 `export CFLAGS=-Qunused-arguments`
 
@@ -65,3 +67,10 @@ app.config['COMPRESSOR_OFFLINE_COMPRESS'] = not app.config.get('DEBUG')
 jac = JAC(app)
 ```
 And you are done.
+
+# Running Tests
+```virtualenv venv
+. venv/bin/activate
+pip install -r requirements_tests.txt
+make test
+```
