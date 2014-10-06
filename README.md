@@ -43,10 +43,10 @@ You just have to create an environment with jac on it and configure output dir, 
 ```python
 import jinja2
 
-from jac import CompilerExtension
+from jac import CompressorExtension
 
-env = jinja2.Environment(extensions=[CompilerExtension])
-env.compressor_output_dir = tmpdir
+env = jinja2.Environment(extensions=[CompressorExtension])
+env.compressor_output_dir = './static/dist'
 env.compressor_static_prefix = '/static'
 env.compressor_source_dirs = './static_files'
 ```
@@ -59,6 +59,9 @@ from jac.contrib.flask import JAC
 
 app = Flask(__name__)
 app.config['COMPRESSOR_DEBUG'] = app.config.get('DEBUG')
+app.config['COMPRESSOR_OUTPUT_DIR'] = './static/dist'
+app.config['COMPRESSOR_STATIC_PREFIX'] = '/static'
+app.config['COMPRESSOR_OFFLINE_COMPRESS'] = not app.config.get('DEBUG')
 jac = JAC(app)
 ```
 And you are done.
