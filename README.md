@@ -62,10 +62,53 @@ app = Flask(__name__)
 app.config['COMPRESSOR_DEBUG'] = app.config.get('DEBUG')
 app.config['COMPRESSOR_OUTPUT_DIR'] = './static/dist'
 app.config['COMPRESSOR_STATIC_PREFIX'] = '/static'
-app.config['COMPRESSOR_OFFLINE_COMPRESS'] = not app.config.get('DEBUG')
 jac = JAC(app)
 ```
 And you are done.
+
+
+## Offline Compression
+JAC supports compressing static assets offline, then deploying to a production server. Here is a script to compress your static assets if using Flask:
+
+```
+#!/usr/bin/env python
+
+import os
+import shutil
+import sys
+
+import jinja2
+from jac import CompressorExtension
+from jac.contrib.flask import get_template_dirs
+
+from my_flask_app import app
+
+
+def main():
+
+    env = app.jinja_env
+
+    if os.path.exists(env.compressor_output_dir):
+        print('Deleting previously compressed files in {output_dir}'.format(output_dir=env.compressor_output_dir))
+        shutil.rmtree(env.compressor_output_dir)
+    else:
+        print('No previous compressed files found in {output_dir}'.format(output_dir=env.compressor_output_dir))
+
+    template_dirs = ['my_flask_app/'+x for x in get_template_dirs(app)]
+
+    print('Compressing static assets into {output_dir}'.format(output_dir=env.compressor_output_dir))
+    env.extensions['jac.extension.CompressorExtension'].compressor.offline_compress(env, template_dirs)
+
+    print 'Finished.'
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
+```
+
+Then create a scr
+
 
 # Running Tests
 ```
