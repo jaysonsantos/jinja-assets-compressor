@@ -11,15 +11,14 @@ def static_finder(app):
             folders = set()
             for blueprint in app.blueprints.values():
                 if blueprint.static_folder is not None:
-                    folders.append(blueprint.static_folder)
-            folders.update(list(app.static_folder))
+                    folders.update([blueprint.static_folder])
+            folders.update([app.static_folder])
             return folders
         else:
             for rule in app.url_map.iter_rules():
-                if '.' in rule.endpoint and not app.jinja_env.compressor_ignore_blueprint_prefix:
+                if '.' in rule.endpoint:
                     with_blueprint = True
-                    (blueprint, view) = rule.endpoint.split('.', 1)
-                    blueprint = app.blueprints[blueprint]
+                    blueprint = app.blueprints[rule.endpoint.rsplit('.', 1)[0]]
 
                     data = rule.match(u('{subdomain}|{path}').format(
                         subdomain=blueprint.subdomain or '',
@@ -33,9 +32,18 @@ def static_finder(app):
                     static_folder = blueprint.static_folder if with_blueprint and blueprint.static_folder is not None else app.static_folder
                     return os.path.join(static_folder, data['filename'])
 
-            raise IOError(2, u('File not found {0}.').format(path))
+        raise IOError(2, u('File not found {0}.').format(path))
 
     return find
+
+
+def get_template_dirs(app):
+    folders = set()
+    for blueprint in app.blueprints.values():
+        if blueprint.template_folder is not None:
+            folders.update([blueprint.template_folder])
+    folders.update([app.template_folder])
+    return folders
 
 
 class JAC(object):
@@ -74,5 +82,4 @@ class JAC(object):
         app.jinja_env.compressor_debug = app.config.get('COMPRESSOR_DEBUG', False)
         app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or app.static_folder
         app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or app.static_url_path
-        app.jinja_env.compressor_ignore_blueprint_prefix = app.config.get('COMPRESSOR_IGNORE_BLUEPRINT_PREFIX', False)
         app.jinja_env.compressor_source_dirs = static_finder(app)

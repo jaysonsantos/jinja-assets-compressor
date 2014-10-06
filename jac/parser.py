@@ -36,16 +36,22 @@ class Jinja2Parser(object):
 
         return body
 
-    def _render_nodes(self, context, nodes):
+    def _render_nodes(self, context, nodes, globals=None):
+        if not isinstance(globals, dict):
+            globals = {}
         compiled_node = self.env.compile(jinja2.nodes.Template(nodes))
-        template = jinja2.Template.from_code(self.env, compiled_node, {})
-        return template.render(context)
+        template = jinja2.Template.from_code(self.env, compiled_node, globals)
+        try:
+            rendered = template.render(context)
+        except jinja2.exceptions.UndefinedError:
+            raise RuntimeError('Only global variables are supported inside compress blocks.')
+        return rendered
 
-    def render_nodelist(self, context, node):
-        return self._render_nodes(context, node.body)
+    def render_nodelist(self, context, node, globals=None):
+        return self._render_nodes(context, node.body, globals=globals)
 
-    def render_node(self, context, node):
-        return self._render_nodes(context, [node])
+    def render_node(self, context, node, globals=None):
+        return self._render_nodes(context, [node], globals=globals)
 
     def walk_nodes(self, node, block_name=None):
         for node in self.get_nodelist(node):

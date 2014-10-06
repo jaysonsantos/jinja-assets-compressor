@@ -41,17 +41,10 @@ class CompressorExtension(Extension):
     def _display_block(self, compression_type, caller):
         html = caller()
         html_hash = self.compressor.make_hash(html)
-        if self.compressor.config.compressor_debug:
-            filename = os.path.join(u('{hash}-{filename}.{extension}').format(
-                hash=html_hash,
-                filename=filename,
-                extension=compression_type,
-            ))
-        else:
-            filename = os.path.join(u('{hash}.{extension}').format(
-                hash=html_hash,
-                extension=compression_type,
-            ))
+        filename = os.path.join(u('{hash}.{extension}').format(
+            hash=html_hash,
+            extension=compression_type,
+        ))
         static_prefix = u(self.compressor.config.compressor_static_prefix)
         return self.compressor.render_element(os.path.join(static_prefix, filename), compression_type)
 

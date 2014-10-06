@@ -101,20 +101,20 @@ $margin: 16px
         tmpdir = str(env.compressor_output_dir)
 
         env.compressor_offline_compress = True
-        env.compressor_source_dirs = [tmpdir]
-        env.compressor_follow_symlinks = True
-        env.compressor_output_dir = os.path.join(tmpdir, 'static/dist')
+        env.compressor_source_dirs = [os.path.join(tmpdir, 'static')]
+        env.compressor_output_dir = os.path.join(tmpdir, 'dist')
 
         compressor = Compressor(environment=env)
         css = '<link type="text/css" rel="stylesheet" href="/static/test.css" />'
 
-        with open(os.path.join(tmpdir, 'test.html'), 'w') as fh:
+        os.makedirs(os.path.join(tmpdir, 'templates'))
+        with open(os.path.join(tmpdir, 'templates', 'test.html'), 'w') as fh:
             fh.write('<html>{% compress "css" %}'+css+'{% endcompress %}</html>')
 
         os.makedirs(os.path.join(tmpdir, 'static'))
-        with open(os.path.join(tmpdir, 'static/test.css'), 'w') as fh:
+        with open(os.path.join(tmpdir, 'static', 'test.css'), 'w') as fh:
             fh.write('html { display: block; }')
 
-        compressor.offline_compress(env)
+        compressor.offline_compress(env, [os.path.join(tmpdir, 'templates')])
 
-        assert os.path.exists(os.path.join(tmpdir, 'static/dist')) == True
+        assert os.path.exists(env.compressor_output_dir) == True

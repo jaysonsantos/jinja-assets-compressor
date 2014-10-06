@@ -9,6 +9,7 @@ class Config(object):
         'compressor_debug': False,
         'compressor_static_prefix': '/static/dist',
         'compressor_source_dirs': None,
+        'compressor_static_prefix_precompress': '/static',
         'compressor_output_dir': 'static/dist',
         'compressor_ignore_blueprint_prefix': False,
     }

@@ -128,7 +128,9 @@ class Compressor(object):
                 dirs = self.config.compressor_source_dirs
 
             for d in dirs:
-                filename = os.path.join(d, path.lstrip(os.sep).lstrip('/'))
+                if self.config.compressor_static_prefix_precompress is not None and path.startswith('/'):
+                    path = path.replace(self.config.compressor_static_prefix_precompress, '', 1).lstrip(os.sep).lstrip('/')
+                filename = os.path.join(d, path)
                 if os.path.exists(filename):
                     return filename
 
@@ -169,10 +171,17 @@ class Compressor(object):
                 configs[key] = getattr(environment, key)
         return configs
 
-    def offline_compress(self, environment):
+    def offline_compress(self, environment, template_dirs):
+
+        if isinstance(template_dirs, basestring):
+            template_dirs = [template_dirs]
+
+        configs = self.get_configs_from_environment(environment)
+        self.config.update(**configs)
+
         compressor_nodes = {}
         parser = Jinja2Parser(charset='utf-8', env=environment)
-        for template_path in self.find_template_files():
+        for template_path in self.find_template_files(template_dirs):
             try:
                 template = parser.parse(template_path)
             except IOError:  # unreadable file -> ignore
@@ -199,26 +208,20 @@ class Compressor(object):
 
         for template, nodes in compressor_nodes.items():
             for node in nodes:
-                html = parser.render_nodelist({}, node)
-                parser.render_node({}, node)
+                html = parser.render_nodelist({}, node, globals=environment.globals)
+                parser.render_node({}, node, globals=environment.globals)
 
-    def find_template_files(self):
-        if callable(self.config.compressor_source_dirs):
-            source_dirs = self.config.compressor_source_dirs()
-        else:
-            if isinstance(self.config.compressor_source_dirs, basestring):
-                source_dirs = [self.config.compressor_source_dirs]
-            else:
-                source_dirs = self.config.compressor_source_dirs
-
+    def find_template_files(self, template_dirs):
         templates = set()
-
-        if not source_dirs:
-            raise RuntimeError('Missing compressor_source_dirs.')
-
-        for d in source_dirs:
+        count = 0
+        for d in template_dirs:
             for root, dirs, files in os.walk(d,
                     followlinks=self.config.compressor_follow_symlinks):
                 templates.update(os.path.join(root, name)
                     for name in files if not name.startswith('.'))
+                count += 1
+                if count > 99:
+                    break
+            if count > 99:
+                break
         return templates
