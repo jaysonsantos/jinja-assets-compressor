@@ -17,7 +17,7 @@ def test_flask_extension_init_self_app(mocked_flask_app):
 def test_flask_extension_jinja_env_add_extension(mocked_flask_app):
     ext = JAC()
     ext.init_app(mocked_flask_app)
-    mocked_flask_app.jinja_env.add_extension.assert_called_once_with('jac.CompilerExtension')
+    mocked_flask_app.jinja_env.add_extension.assert_called_once_with('jac.CompressorExtension')
 
 
 def test_flask_extension_jinja_env_compressor_output_dir(mocked_flask_app):

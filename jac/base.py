@@ -7,6 +7,8 @@ from bs4 import BeautifulSoup
 from jac.compat import u, open, file, basestring, utf8_encode
 from jac.compilers import compile
 from jac.config import Config
+from jac.exceptions import TemplateSyntaxError, TemplateDoesNotExist, OfflineGenerationError
+from jac.parser import Jinja2Parser
 
 try:
     from collections import OrderedDict # Python >= 2.7
@@ -14,10 +16,14 @@ except ImportError:
     from ordereddict import OrderedDict # Python 2.6
 
 
-class JAC(object):
+class Compressor(object):
 
     def __init__(self, **kwargs):
-        self.config = Config(**kwargs)
+        if 'environment' in kwargs:
+            configs = self.get_configs_from_environment(kwargs['environment'])
+            self.config = Config(**configs)
+        else:
+            self.config = Config(**kwargs)
 
     def compress(self, html, compression_type):
 
@@ -123,7 +129,7 @@ class JAC(object):
                 dirs = self.config.compressor_source_dirs
 
             for d in dirs:
-                filename = os.path.join(d, path)
+                filename = os.path.join(d, path.lstrip(os.sep).lstrip('/'))
                 if os.path.exists(filename):
                     return filename
 
@@ -155,4 +161,65 @@ class JAC(object):
         elif type.lower() == 'js':
             return u('<script type="text/javascript" src="{0}"></script>').format(filename)
         else:
-            raise RuntimeError('Unsupported type of compression %s' % type)
+            raise RuntimeError(u('Unsupported type of compression {0}').format(type))
+
+    def get_configs_from_environment(self, environment):
+        configs = {}
+        for key in dir(environment):
+            if key.startswith('compressor_'):
+                configs[key] = getattr(environment, key)
+        return configs
+
+    def offline_compress(self, environment):
+        compressor_nodes = {}
+        parser = Jinja2Parser(charset='utf-8', env=environment)
+        for template_path in self.find_template_files():
+            try:
+                template = parser.parse(template_path)
+            except IOError:  # unreadable file -> ignore
+                continue
+            except TemplateSyntaxError as e:  # broken template -> ignore
+                continue
+            except TemplateDoesNotExist:  # non existent template -> ignore
+                continue
+            except UnicodeDecodeError:
+                continue
+
+            try:
+                nodes = list(parser.walk_nodes(template))
+            except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+                continue
+            if nodes:
+                template.template_name = template_path
+                compressor_nodes.setdefault(template, []).extend(nodes)
+
+        if not compressor_nodes:
+            raise OfflineGenerationError(
+                "No 'compress' template tags found in templates. "
+                "Try setting follow_symlinks to True")
+
+        for template, nodes in compressor_nodes.items():
+            for node in nodes:
+                html = parser.render_nodelist({}, node)
+                parser.render_node({}, node)
+
+    def find_template_files(self):
+        if callable(self.config.compressor_source_dirs):
+            source_dirs = self.config.compressor_source_dirs()
+        else:
+            if isinstance(self.config.compressor_source_dirs, basestring):
+                source_dirs = [self.config.compressor_source_dirs]
+            else:
+                source_dirs = self.config.compressor_source_dirs
+
+        templates = set()
+
+        if not source_dirs:
+            raise RuntimeError('Missing compressor_source_dirs.')
+
+        for d in source_dirs:
+            for root, dirs, files in os.walk(d,
+                    followlinks=self.config.compressor_follow_symlinks):
+                templates.update(os.path.join(root, name)
+                    for name in files if not name.startswith('.'))
+        return templates

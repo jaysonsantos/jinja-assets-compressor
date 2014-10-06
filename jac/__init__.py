@@ -1,3 +1,3 @@
 from .compilers import compile
-from .extension import CompilerExtension
-from .base import JAC
+from .extension import CompressorExtension
+from .base import Compressor
