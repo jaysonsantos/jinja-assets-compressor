@@ -54,8 +54,6 @@ class Compressor(object):
         assets = OrderedDict()
         soup = BeautifulSoup(html)
         for count, c in enumerate(self.find_compilable_tags(soup)):
-            if c.get('type') is None:
-                raise RuntimeError('Tags to be compressed must have a type attribute.')
 
             url = c.get('src') or c.get('href')
             if url:
@@ -152,6 +150,10 @@ class Compressor(object):
                     tag['type'] = 'text/css'
             else:
                 tag['type'] == tag['type'].lower()
+
+            if tag.get('type') is None:
+                raise RuntimeError(u('Tags to be compressed must have a type attribute: {0}').format(u(tag)))
+
             yield tag
 
     def get_contents(self, src):
