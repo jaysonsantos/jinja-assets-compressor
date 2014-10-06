@@ -107,8 +107,6 @@ if __name__ == '__main__':
     sys.exit(main())
 ```
 
-Then create a scr
-
 
 # Running Tests
 ```
