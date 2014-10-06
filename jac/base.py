@@ -213,15 +213,9 @@ class Compressor(object):
 
     def find_template_files(self, template_dirs):
         templates = set()
-        count = 0
         for d in template_dirs:
             for root, dirs, files in os.walk(d,
                     followlinks=self.config.compressor_follow_symlinks):
                 templates.update(os.path.join(root, name)
                     for name in files if not name.startswith('.'))
-                count += 1
-                if count > 99:
-                    break
-            if count > 99:
-                break
         return templates
