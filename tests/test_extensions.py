@@ -54,7 +54,7 @@ alert("Hi");
 
     def test_render(self, env, html_template):
         template = env.from_string(html_template)
-        expected = '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
+        expected = '<link type="text/css" rel="stylesheet" href="/static/dist/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
 
         assert expected == template.render()
 
@@ -62,13 +62,13 @@ alert("Hi");
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
 
-        assert ext._compile('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
+        assert ext._compress_block('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
 
     def test_compile_js(self, tmpdir, html_js):
         from jac import CompilerExtension
         ext = CompilerExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
 
-        assert ext._compile('js', mock.Mock(return_value=html_js)) == '<script type="text/javascript" src="/static/0749ffbc6e886a3a01ee6e6c15efc779.js"></script>'
+        assert ext._compress_block('js', mock.Mock(return_value=html_js)) == '<script type="text/javascript" src="/static/0749ffbc6e886a3a01ee6e6c15efc779.js"></script>'
 
     def test_compile_file(self, tmpdir):
         from jac import CompilerExtension
@@ -93,4 +93,4 @@ $margin: 16px
         expected_hash = hashlib.md5(utf8_encode(html))
         expected_hash.update(utf8_encode('{}-{}'.format(stat.st_size, stat.st_mtime)))
 
-        assert ext._compile('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
+        assert ext._compress_block('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
