@@ -77,8 +77,6 @@ import os
 import shutil
 import sys
 
-import jinja2
-from jac import CompressorExtension
 from jac.contrib.flask import get_template_dirs
 
 from my_flask_app import app
