@@ -1,2 +1,3 @@
 from .compilers import compile
-from .extension import CompilerExtension
+from .extension import CompressorExtension
+from .base import Compressor

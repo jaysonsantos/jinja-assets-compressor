@@ -1,157 +1,52 @@
 # -*- coding: utf-8 -*-
 
-import hashlib
 import os
 
-from bs4 import BeautifulSoup
 from jinja2 import nodes
 from jinja2.ext import Extension
 
-from jac import compile
-from jac.compat import u, open, basestring, file, utf8_encode
-
-try:
-    from collections import OrderedDict # Python >= 2.7
-except ImportError:
-    from ordereddict import OrderedDict # Python 2.6
+from jac.base import Compressor
+from jac.compat import u
 
 
-class CompilerExtension(Extension):
+class CompressorExtension(Extension):
     tags = set(['compress'])
 
+    def __init__(self, *args, **kwargs):
+        super(CompressorExtension, self).__init__(*args, **kwargs)
+        self.compressor = Compressor(environment=self.environment)
+
     def parse(self, parser):
+
+        # update configs
+        configs = self.compressor.get_configs_from_environment(self.environment)
+        self.compressor.config.update(**configs)
+
         lineno = next(parser.stream).lineno
         args = [parser.parse_expression()]
         body = parser.parse_statements(['name:endcompress'], drop_needle=True)
 
         if len(body) > 1:
-            raise RuntimeError('One tag supported for now.')
+            raise RuntimeError('Template tags not supported inside compress blocks.')
 
-        return nodes.CallBlock(self.call_method('_compile', args), [], [], body).set_lineno(lineno)
-
-    def _find_compilable_tags(self, soup):
-        tags = ['link', 'style', 'script']
-        for tag in soup.find_all(tags):
-            if tag.get('type') is None:
-                if tag.name == 'script':
-                    tag['type'] = 'text/javascript'
-                if tag.name == 'style':
-                    tag['type'] = 'text/css'
-            else:
-                tag['type'] == tag['type'].lower()
-            yield tag
-
-    def _render_block(self, filename, type):
-        """Returns an html element pointing to filename as a string.
-        """
-        filename = '%s/%s' % (self.environment.compressor_static_prefix, os.path.basename(filename))
-
-        if type.lower() == 'css':
-            return u('<link type="text/css" rel="stylesheet" href="%s" />' % filename)
-        elif type.lower() == 'js':
-            return u('<script type="text/javascript" src="%s"></script>' % filename)
+        if hasattr(self.environment, 'compressor_offline_compress') and self.environment.compressor_offline_compress:
+            return nodes.CallBlock(self.call_method('_display_block', args), [], [], body).set_lineno(lineno)
         else:
-            raise RuntimeError('Unsupported type of compression %s' % type)
+            return nodes.CallBlock(self.call_method('_compress_block', args), [], [], body).set_lineno(lineno)
 
-    def _find_file(self, path):
-        if callable(self.environment.compressor_source_dirs):
-            filename = self.environment.compressor_source_dirs(path)
-            if os.path.exists(filename):
-                return filename
-        else:
-            if isinstance(self.environment.compressor_source_dirs, basestring):
-                dirs = [self.environment.compressor_source_dirs]
-            else:
-                dirs = self.environment.compressor_source_dirs
-
-            for d in dirs:
-                filename = os.path.join(d, path)
-                if os.path.exists(filename):
-                    return filename
-
-        raise IOError(2, 'File not found %s' % path)
-
-    def _make_hash(self, html, compilables):
-        html_hash = hashlib.md5(utf8_encode(html))
-
-        for c in compilables:
-            if c.get('src') or c.get('href'):
-                stat = os.stat(self._find_file(u(c.get('src') or c.get('href'))))
-                html_hash.update(utf8_encode('{}-{}'.format(stat.st_size, stat.st_mtime)))
-
-        return html_hash.hexdigest()
-
-    def _get_contents(self, src):
-        if isinstance(src, file):
-            return u(src.read())
-        else:
-            return u(src)
-
-    def _compile(self, compression_type, caller):
+    def _compress_block(self, compression_type, caller):
         html = caller()
+        return self.compressor.compress(html, compression_type)
 
-        enabled = (not hasattr(self.environment, 'compressor_enabled') or
-                        self.environment.compressor_enabled is not False)
-        if not enabled:
-            return html
+    def _display_block(self, compression_type, caller):
+        html = caller()
+        html_hash = self.compressor.make_hash(html)
+        filename = os.path.join(u('{hash}.{extension}').format(
+            hash=html_hash,
+            extension=compression_type,
+        ))
+        static_prefix = u(self.compressor.config.compressor_static_prefix)
+        return self.compressor.render_element(os.path.join(static_prefix, filename), compression_type)
 
-        debug = (hasattr(self.environment, 'compressor_debug') and
-                      self.environment.compressor_debug is True)
-        compression_type = compression_type.lower()
-        soup = BeautifulSoup(html)
-        compilables = self._find_compilable_tags(soup)
-        outdir = u(self.environment.compressor_output_dir)
-        static_prefix = u(self.environment.compressor_static_prefix)
-        assets = OrderedDict()
-
-        html_hash = self._make_hash(html, self._find_compilable_tags(soup))
-
-        if not os.path.exists(u(self.environment.compressor_output_dir)):
-            os.makedirs(u(self.environment.compressor_output_dir))
-
-        cached_file = os.path.join(u(self.environment.compressor_output_dir),
-                                   '%s.%s') % (html_hash, compression_type)
-
-        if os.path.exists(cached_file):
-            return self._render_block(cached_file, compression_type)
-
-        for count, c in enumerate(compilables):
-            if c.get('type') is None:
-                raise RuntimeError('Tags to be compressed must have a compression_type.')
-
-            src = c.get('src') or c.get('href')
-            if src:
-                filename = os.path.basename(u(src)).split('.', 1)[0]
-                uri_cwd = os.path.join(static_prefix, os.path.dirname(u(src)))
-                src = open(self._find_file(u(src)), 'r', encoding='utf-8')
-                cwd = os.path.dirname(src.name)
-            else:
-                uri_cwd = None
-                filename = 'inline{0}'.format(count)
-                src = c.string
-                cwd = None
-
-            needs_compile = c['type'] != 'text/javascript'
-            if not debug or needs_compile:
-                text = compile(self._get_contents(src), c['type'], cwd=cwd,
-                               uri_cwd=uri_cwd, debug=debug)
-            else:
-                text = self._get_contents(src)
-
-            if not debug:
-                outfile = cached_file
-            else:
-                outfile = os.path.join(outdir, '%s-%s.%s') % (html_hash,
-                          filename, compression_type)
-
-            if assets.get(outfile) is None:
-                assets[outfile] = u('')
-            assets[outfile] += u("\n") + text
-
-        blocks = u('')
-        for outfile, asset in assets.items():
-            with open(outfile, 'w', encoding='utf-8') as f:
-                f.write(asset)
-            blocks += self._render_block(outfile, compression_type)
-
-        return blocks
+    def set(self, key, val):
+        self.compressor.config.set(key, val)

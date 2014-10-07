@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from rjsmin import jsmin
 from six import with_metaclass
 
