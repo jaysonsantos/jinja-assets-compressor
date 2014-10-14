@@ -12,4 +12,6 @@ class JavaScriptCompiler(with_metaclass(CompilerMeta, object)):
     @classmethod
     def compile(cls, what, mimetype='text/javascript', cwd=None,
                 uri_cwd=None, debug=None):
+        if debug:
+            return what
         return jsmin(what)
