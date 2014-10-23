@@ -89,9 +89,9 @@ $margin: 16px
   border-color: $blue''')
 
         html = '<link type="text/sass" rel="stylesheet" src="test.sass" />'
-        stat = os.stat(static_file)
         expected_hash = hashlib.md5(utf8_encode(html))
-        expected_hash.update(utf8_encode('{}-{}'.format(stat.st_size, stat.st_mtime)))
+        with open(static_file) as f:
+            expected_hash.update(utf8_encode(f.read()))
 
         assert ext._compress_block('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
 

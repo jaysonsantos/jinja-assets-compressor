@@ -109,8 +109,13 @@ class Compressor(object):
         for c in compilables:
             url = c.get('src') or c.get('href')
             if url:
-                stat = os.stat(self.find_file(u(url)))
-                html_hash.update(utf8_encode('{0}-{1}'.format(stat.st_size, stat.st_mtime)))
+                with open(self.find_file(url), 'r', encoding='utf-8') as f:
+                    while True:
+                        content = f.read(1024)
+                        if content:
+                            html_hash.update(utf8_encode(content))
+                        else:
+                            break
 
         return html_hash.hexdigest()
 
