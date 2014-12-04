@@ -27,6 +27,7 @@ To use it, you just have to put your css or js inside a compress tag.
 <style type="text/sass">
 sass stuff
 </style>
+<link rel="stylesheet" type="text/sass" href="file.sass">
 {% endcompress %}
 
 {% compress 'js' %}
