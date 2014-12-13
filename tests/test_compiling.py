@@ -53,3 +53,25 @@ class TestLess:
     def test_compiling(self, sample_less):
         compiled_css = 'body .test-class{color:#fff}'
         assert jac.compile(sample_less, 'text/less') == compiled_css
+
+
+class TestCoffee:
+    @pytest.fixture
+    def sample_coffee(self):
+        """
+        Returns a simple coffee script for testing
+        """
+
+        return '''
+foo = (str) ->
+ alert str
+ true
+
+foo "Hello CoffeeScript!"
+'''
+
+    def test_compiling(self, sample_coffee):
+        compiled_js = '\
+(function(){var foo;foo=function(str){alert(str);return true;};\
+foo("Hello CoffeeScript!");}).call(this);'
+        assert jac.compile(sample_coffee, 'text/coffeescript') == compiled_js
