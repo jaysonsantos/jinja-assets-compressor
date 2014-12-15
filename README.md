@@ -12,6 +12,9 @@ pip install jac
 For LESS and CSS support, install [less](https://www.npmjs.org/package/less):<br />
 `npm install -g less`
 
+For COFFEE support, install [coffee-script](https://www.npmjs.com/package/coffee-script):<br />
+`npm install -g coffee-script`
+
 For Sass and SCSS support, install [sass](https://rubygems.org/gems/sass):<br />
 `gem install sass`
 
@@ -34,7 +37,7 @@ sass stuff
 <script type="text/coffeescript">
 coffee stuff
 </script>
-<script type="text/coffescript" src="file.coffee"></script>
+<script type="text/coffeescript" src="file.coffee"></script>
 {% endcompress %}
 ```
 
