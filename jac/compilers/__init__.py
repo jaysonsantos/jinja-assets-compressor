@@ -38,3 +38,4 @@ def compile(what, mimetype, cwd=None, uri_cwd=None, debug=None):
 from .sass import SassCompiler
 from .less import LessCompiler
 from .javascript import JavaScriptCompiler
+from .coffee import CoffeeScriptCompiler
