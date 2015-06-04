@@ -1,5 +1,5 @@
 pytest==2.7.1
-ipdb==0.8
+ipdb==0.8.1
 pytest-xdist==1.12
 mock==1.0.1
 pytest-cov==1.8.1
