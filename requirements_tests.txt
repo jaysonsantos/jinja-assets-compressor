@@ -1,7 +1,7 @@
-pytest==2.6.4
-ipdb==0.8
-pytest-xdist==1.11
+pytest==2.7.1
+ipdb==0.8.1
+pytest-xdist==1.12
 mock==1.0.1
-pytest-cov==1.8.0
+pytest-cov==1.8.1
 -e git+git://github.com/mverteuil/pytest-ipdb.git@81bf2a29e4e4a1a25b592a5f7ddf0078263e7f79#egg=pytestipdb
 -r requirements.txt
