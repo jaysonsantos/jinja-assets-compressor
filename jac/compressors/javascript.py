@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 from rjsmin import jsmin
-from six import with_metaclass
-
-from . import CompilerMeta
 
 
-class JavaScriptCompiler(with_metaclass(CompilerMeta, object)):
-    supported_mimetypes = ['text/javascript']
+class JavaScriptCompressor(object):
+    """Builtin compressor for text/javascript mimetype.
+
+    Uses the rjsmin for minification.
+    """
 
     @classmethod
     def compile(cls, what, mimetype='text/javascript', cwd=None,

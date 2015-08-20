@@ -114,6 +114,59 @@ if __name__ == '__main__':
 ```
 
 
+## Custom Compressors
+
+The `compressor_classes` template env variable tells jac which compressor to
+use for each mimetype. The default value for `compressor_classes` is:
+```python
+{
+    'text/css': LessCompressor,
+    'text/coffeescript': CoffeeScriptCompressor,
+    'text/less': LessCompressor,
+    'text/javascript': JavaScriptCompressor,
+    'text/sass': SassCompressor,
+    'text/scss': SassCompressor,
+}
+```
+
+To use an alternate compressor class, provide a class with a `compile` class
+method accepting arg `text` and kwargs `mimetype`, `cwd`, `uri_cwd`, and
+`debug`. For example, to use [libsass-python](https://github.com/dahlia/libsass-python)
+for SASS files instead of the built-in SassCompressor, create your custom
+compressor class:
+
+```python
+import sass
+
+class CustomSassCompressor(object):
+    """Custom compressor for text/sass mimetype.
+
+    Uses libsass-python for compression.
+    """
+
+    @classmethod
+    def compile(cls, text, cwd=None, **kwargs):
+
+        include_paths = []
+        if cwd:
+            include_paths += [cwd]
+
+        return sass.compile(string=text, include_paths=include_paths)
+```
+
+Then tell jac to use your custom compressor for `text/sass` mimetypes:
+
+```python
+env.compressor_classes['text/sass'] = CustomSassCompressor
+```
+
+The equivalent for Flask is:
+
+```python
+jac.set_compressor('text/sass', CustomSassCompressor)
+```
+
+
 # Running Tests
 ```
 virtualenv venv

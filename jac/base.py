@@ -5,7 +5,6 @@ import hashlib
 from bs4 import BeautifulSoup
 
 from jac.compat import u, open, file, basestring, utf8_encode
-from jac.compilers import compile
 from jac.config import Config
 from jac.exceptions import TemplateSyntaxError, TemplateDoesNotExist, OfflineGenerationError
 from jac.parser import Jinja2Parser
@@ -67,11 +66,19 @@ class Compressor(object):
                 text = c.string
                 cwd = None
 
-            compressed = compile(self.get_contents(text),
-                                 c['type'],
-                                 cwd=cwd,
-                                 uri_cwd=uri_cwd,
-                                 debug=self.config.compressor_debug)
+            mimetype = c['type'].lower()
+            try:
+                compressor = self.config.compressor_classes[mimetype]
+            except KeyError:
+                msg = u('Unsupported type of compression {0}').format(mimetype)
+                raise RuntimeError(msg)
+
+            text = self.get_contents(text)
+            compressed = compressor.compile(text,
+                                            mimetype=mimetype,
+                                            cwd=cwd,
+                                            uri_cwd=uri_cwd,
+                                            debug=self.config.compressor_debug)
 
             if not self.config.compressor_debug:
                 outfile = cached_file
@@ -199,7 +206,7 @@ class Compressor(object):
                 template = parser.parse(template_path)
             except IOError:  # unreadable file -> ignore
                 continue
-            except TemplateSyntaxError as e:  # broken template -> ignore
+            except TemplateSyntaxError:  # broken template -> ignore
                 continue
             except TemplateDoesNotExist:  # non existent template -> ignore
                 continue
@@ -208,7 +215,7 @@ class Compressor(object):
 
             try:
                 nodes = list(parser.walk_nodes(template))
-            except (TemplateDoesNotExist, TemplateSyntaxError) as e:
+            except (TemplateDoesNotExist, TemplateSyntaxError):
                 continue
             if nodes:
                 template.template_name = template_path
@@ -221,7 +228,6 @@ class Compressor(object):
 
         for template, nodes in compressor_nodes.items():
             for node in nodes:
-                html = parser.render_nodelist({}, node, globals=environment.globals)
                 parser.render_node({}, node, globals=environment.globals)
 
     def find_template_files(self, template_dirs):

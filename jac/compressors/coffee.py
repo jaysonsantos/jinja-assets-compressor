@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import subprocess
-from six import with_metaclass
-
 from rjsmin import jsmin
+
 from jac.compat import file, u, utf8_encode
 
-from . import CompilerMeta
 
+class CoffeeScriptCompressor(object):
+    """Builtin compressor text/coffeescript mimetype.
 
-class CoffeeScriptCompiler(with_metaclass(CompilerMeta, object)):
-    supported_mimetypes = ['text/coffeescript', ]
+    Uses the coffee command line program to generate JavaScript, then
+    uses rjsmin for minification.
+    """
 
     @classmethod
     def compile(cls, what, mimetype='text/coffeescript', cwd=None, uri_cwd=None, debug=None):
