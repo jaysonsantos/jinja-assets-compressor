@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import subprocess
-from six import with_metaclass
 
 from jac.compat import file, u, utf8_encode
 
-from . import CompilerMeta
+class LessCompressor(object):
+    """Builtin compressor for text/less and text/css mimetypes.
 
-
-class LessCompiler(with_metaclass(CompilerMeta, object)):
-    supported_mimetypes = ['text/less', 'text/css']
+    Uses the lessc command line program for compression.
+    """
 
     @classmethod
     def compile(cls, what, mimetype='text/less', cwd=None, uri_cwd=None,

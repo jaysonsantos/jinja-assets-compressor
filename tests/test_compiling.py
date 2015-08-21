@@ -1,6 +1,9 @@
 import pytest
-import jac
 
+from jac.compressors.coffee import CoffeeScriptCompressor
+from jac.compressors.less import LessCompressor
+from jac.compressors.javascript import JavaScriptCompressor
+from jac.compressors.sass import SassCompressor
 
 class TestSass:
     @pytest.fixture
@@ -32,7 +35,7 @@ $margin: 16px
   border-color: #3bbfce; }
 """
 
-        assert jac.compile(sample_sass, 'text/sass') == compiled_css
+        assert SassCompressor.compile(sample_sass, 'text/sass') == compiled_css
 
 
 class TestLess:
@@ -52,7 +55,7 @@ class TestLess:
 
     def test_compiling(self, sample_less):
         compiled_css = 'body .test-class{color:#fff}'
-        assert jac.compile(sample_less, 'text/less') == compiled_css
+        assert LessCompressor.compile(sample_less, 'text/less') == compiled_css
 
 
 class TestCoffee:
@@ -74,4 +77,25 @@ foo "Hello CoffeeScript!"
         compiled_js = '\
 (function(){var foo;foo=function(str){alert(str);return true;};\
 foo("Hello CoffeeScript!");}).call(this);'
-        assert jac.compile(sample_coffee, 'text/coffeescript') == compiled_js
+        assert CoffeeScriptCompressor.compile(sample_coffee, 'text/coffeescript') == compiled_js
+
+
+class TestJavaScript:
+    @pytest.fixture
+    def sample_javascript(self):
+        """
+        Returns some simple JavaScript for testing
+        """
+
+        return '''
+var foo = function(str) {
+  alert(str);
+  return true;
+};
+
+foo("Hello CoffeeScript!");
+'''
+
+    def test_compiling(self, sample_javascript):
+        compiled_js = 'var foo=function(str){alert(str);return true;};foo("Hello CoffeeScript!");'
+        assert JavaScriptCompressor.compile(sample_javascript, 'text/javascript') == compiled_js

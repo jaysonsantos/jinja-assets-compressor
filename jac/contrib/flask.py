@@ -3,6 +3,10 @@
 import os
 
 from jac.compat import u
+from jac.compressors.coffee import CoffeeScriptCompressor
+from jac.compressors.less import LessCompressor
+from jac.compressors.javascript import JavaScriptCompressor
+from jac.compressors.sass import SassCompressor
 
 
 def static_finder(app):
@@ -82,4 +86,17 @@ class JAC(object):
         app.jinja_env.compressor_debug = app.config.get('COMPRESSOR_DEBUG', False)
         app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or app.static_folder
         app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or app.static_url_path
+        app.jinja_env.compressor_classes = app.config.get('COMPRESSOR_CLASSES', {
+            'text/css': LessCompressor,
+            'text/coffeescript': CoffeeScriptCompressor,
+            'text/less': LessCompressor,
+            'text/javascript': JavaScriptCompressor,
+            'text/sass': SassCompressor,
+            'text/scss': SassCompressor,
+        })
         app.jinja_env.compressor_source_dirs = static_finder(app)
+
+    def set_compressor(self, mimetype, compressor_cls):
+        if not hasattr(self, 'app') or self.app is None:
+            raise RuntimeError('Must initialize JAC with a Flask app first.')
+        self.app.jinja_env.compressor_classes[mimetype] = compressor_cls

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import subprocess
-from six import with_metaclass
 
 from jac.compat import file, u, utf8_encode
 
-from . import CompilerMeta
 
+class SassCompressor(object):
+    """Builtin compressor for text/sass and text/scss mimetypes.
 
-class SassCompiler(with_metaclass(CompilerMeta, object)):
-    supported_mimetypes = ['text/sass', 'text/scss']
+    Uses the sass command line program for compression.
+    """
 
     @classmethod
     def compile(cls, what, mimetype='text/sass', cwd=None,

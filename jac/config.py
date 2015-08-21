@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from .compressors.coffee import CoffeeScriptCompressor
+from .compressors.less import LessCompressor
+from .compressors.javascript import JavaScriptCompressor
+from .compressors.sass import SassCompressor
+
 class Config(dict):
 
     _defaults = {
@@ -12,6 +17,14 @@ class Config(dict):
         'compressor_static_prefix_precompress': '/static',
         'compressor_output_dir': 'static/dist',
         'compressor_ignore_blueprint_prefix': False,
+        'compressor_classes': {
+            'text/css': LessCompressor,
+            'text/coffeescript': CoffeeScriptCompressor,
+            'text/less': LessCompressor,
+            'text/javascript': JavaScriptCompressor,
+            'text/sass': SassCompressor,
+            'text/scss': SassCompressor,
+        },
     }
 
     def __init__(self, **kwargs):
