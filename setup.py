@@ -4,7 +4,7 @@ setup(
     name='jac',
     author='Jayson Reis',
     author_email='santosdosreis@gmail.com',
-    version='0.15.0',
+    version='0.14.1',
     packages=find_packages(exclude=('tests*', )),
     install_requires=open('requirements.txt').readlines(),
     description='A Jinja extension (compatible with Flask and other frameworks) to compile and/or compress your assets.',
