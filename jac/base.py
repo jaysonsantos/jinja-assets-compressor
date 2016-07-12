@@ -2,6 +2,7 @@
 
 import os
 import hashlib
+import warnings
 from bs4 import BeautifulSoup
 
 from jac.compat import u, open, file, basestring, utf8_encode
@@ -13,6 +14,10 @@ try:
     from collections import OrderedDict # Python >= 2.7
 except ImportError:
     from ordereddict import OrderedDict # Python 2.6
+
+
+# ignore warnings from BeautifulSoup
+warnings.filterwarnings('ignore')
 
 
 class Compressor(object):
