@@ -72,7 +72,8 @@ And you are done.
 
 
 ## Offline Compression
-JAC supports compressing static assets offline, then deploying to a production server. Here is a script to compress your static assets if using Flask:
+JAC supports compressing static assets offline, then deploying to a production
+server. Here is a script to compress your static assets if using Flask:
 
 ```python
 #!/usr/bin/env python
@@ -83,7 +84,7 @@ import sys
 
 from jac.contrib.flask import get_template_dirs
 
-from my_flask_app import app
+from my_flask_module import app
 
 
 def main():
@@ -98,20 +99,23 @@ def main():
         print('No previous compressed files found in {output_dir}'
               .format(output_dir=env.compressor_output_dir))
 
-    template_dirs = ['my_flask_app/' + x for x in get_template_dirs(app)]
+    template_dirs = [os.path.join(app.root_path, x)
+                     for x in get_template_dirs(app)]
 
     print('Compressing static assets into {output_dir}'
           .format(output_dir=env.compressor_output_dir))
     compressor = env.extensions['jac.extension.CompressorExtension'].compressor
     compressor.offline_compress(env, template_dirs)
 
-    print 'Finished.'
+    print('Finished offline-compressing static assets.')
     return 0
 
 
 if __name__ == '__main__':
     sys.exit(main())
 ```
+
+Replace `my_flask_module` with the correct import path to find your Flask app.
 
 
 ## Custom Compressors
