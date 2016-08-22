@@ -1,5 +1,7 @@
 #!/bin/bash
-pip install -r requirements_tests.txt --use-mirrors && pip install -r requirements.txt --use-mirrors
+set -e
+set -x
+pip install -r requirements_tests.txt
 gem install sass
 npm install less
 npm install coffee-script
