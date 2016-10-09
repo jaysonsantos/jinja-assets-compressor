@@ -2,7 +2,6 @@
 
 import os
 import hashlib
-import warnings
 from bs4 import BeautifulSoup
 
 from jac.compat import u, open, file, basestring, utf8_encode
@@ -15,9 +14,11 @@ try:
 except ImportError:
     from ordereddict import OrderedDict # Python 2.6
 
-
-# ignore warnings from BeautifulSoup
-warnings.filterwarnings('ignore')
+try:
+    import lxml
+    PARSER = 'lxml'
+except ImportError:
+    PARSER = 'html.parser'
 
 
 class Compressor(object):
@@ -56,7 +57,7 @@ class Compressor(object):
             return self.render_element(filename, compression_type)
 
         assets = OrderedDict()
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, PARSER)
         for count, c in enumerate(self.find_compilable_tags(soup)):
 
             url = c.get('src') or c.get('href')
@@ -114,7 +115,7 @@ class Compressor(object):
         return blocks
 
     def make_hash(self, html):
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, PARSER)
         compilables = self.find_compilable_tags(soup)
         html_hash = hashlib.md5(utf8_encode(html))
 
