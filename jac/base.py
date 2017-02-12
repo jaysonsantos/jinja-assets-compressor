@@ -49,7 +49,7 @@ class Compressor(object):
             ),
         )
 
-        if os.path.exists(cached_file):
+        if not self.config.compressor_debug and os.path.exists(cached_file):
             filename = os.path.join(
                 u(self.config.compressor_static_prefix),
                 os.path.basename(cached_file),
@@ -79,13 +79,6 @@ class Compressor(object):
                 msg = u('Unsupported type of compression {0}').format(mimetype)
                 raise RuntimeError(msg)
 
-            text = self.get_contents(text)
-            compressed = compressor.compile(text,
-                                            mimetype=mimetype,
-                                            cwd=cwd,
-                                            uri_cwd=uri_cwd,
-                                            debug=self.config.compressor_debug)
-
             if not self.config.compressor_debug:
                 outfile = cached_file
             else:
@@ -98,14 +91,27 @@ class Compressor(object):
                     ),
                 )
 
-            if assets.get(outfile) is None:
-                assets[outfile] = u('')
-            assets[outfile] += u("\n") + compressed
+            if os.path.exists(outfile):
+                assets[outfile] = None
+                continue
+
+            text = self.get_contents(text)
+            compressed = compressor.compile(text,
+                                            mimetype=mimetype,
+                                            cwd=cwd,
+                                            uri_cwd=uri_cwd,
+                                            debug=self.config.compressor_debug)
+
+            if not os.path.exists(outfile):
+                if assets.get(outfile) is None:
+                    assets[outfile] = u('')
+                assets[outfile] += u("\n") + compressed
 
         blocks = u('')
         for outfile, asset in assets.items():
-            with open(outfile, 'w', encoding='utf-8') as fh:
-                fh.write(asset)
+            if not os.path.exists(outfile):
+                with open(outfile, 'w', encoding='utf-8') as fh:
+                    fh.write(asset)
             filename = os.path.join(
                 u(self.config.compressor_static_prefix),
                 os.path.basename(outfile),
