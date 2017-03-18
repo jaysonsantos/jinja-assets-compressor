@@ -23,3 +23,10 @@ class TemplateSyntaxError(JACException):
     This exception is raised when a template syntax error is encountered.
     """
     pass
+
+
+class InvalidCompressorError(JACException):
+    """
+    This exception is raised when a compressor is not setup correctly.
+    """
+    pass

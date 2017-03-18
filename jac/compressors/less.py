@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import errno
 import subprocess
 
 from jac.compat import file, u, utf8_encode
+from jac.exceptions import InvalidCompressorError
+
 
 class LessCompressor(object):
     """Builtin compressor for text/less and text/css mimetypes.
@@ -10,10 +13,13 @@ class LessCompressor(object):
     Uses the lessc command line program for compression.
     """
 
+    binary = 'lessc'
+    extra_args = []
+
     @classmethod
     def compile(cls, what, mimetype='text/less', cwd=None, uri_cwd=None,
                 debug=None):
-        args = ['lessc']
+        args = []
 
         if not debug:
             args += ['--compress']
@@ -27,12 +33,27 @@ class LessCompressor(object):
                 uri_cwd += '/'
             args += ['--rootpath={}'.format(uri_cwd)]
 
+        if cls.extra_args:
+            args.extend(cls.extra_args)
+
         args += ['-']
 
-        handler = subprocess.Popen(args,
-                                   stdout=subprocess.PIPE,
-                                   stdin=subprocess.PIPE,
-                                   stderr=subprocess.PIPE, cwd=None)
+        args.insert(0, cls.binary)
+
+        try:
+            handler = subprocess.Popen(args,
+                                       stdout=subprocess.PIPE,
+                                       stdin=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, cwd=None)
+        except OSError as e:
+            msg = '{0} encountered an error when executing {1}: {2}'.format(
+                cls.__name__,
+                cls.binary,
+                u(e),
+            )
+            if e.errno == errno.ENOENT:
+                msg += ' Make sure {0} is in your PATH.'.format(cls.binary)
+            raise InvalidCompressorError(msg)
 
         if isinstance(what, file):
             what = what.read()

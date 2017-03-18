@@ -170,6 +170,26 @@ The equivalent for Flask is:
 jac.set_compressor('text/sass', CustomSassCompressor)
 ```
 
+To only customize the path of a compressor which forks a subprocess for the
+compile step (LessCompressor, CoffeeScriptCompressor, and SassCompressor), just
+extend the compressor class and overwrite the `binary` class attribute:
+
+```python
+from jac.compressors import SassCompressor
+
+class CustomSassCompressor(SassCompressor):
+    """Custom SASS compressor using Compass binary instead of libsass for text/sass mimetype.
+
+    Uses the faster libsass wrapper sassc for SASS compression.
+    https://github.com/sass/sassc
+    """
+
+    binary = '/usr/bin/sassc'
+
+# Tell Flask to use our custom SASS compressor
+jac.set_compressor('text/sass', CustomSassCompressor)
+```
+
 
 # Running Tests
 ```

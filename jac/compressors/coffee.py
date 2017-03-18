@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import errno
 import subprocess
 from rjsmin import jsmin
 
 from jac.compat import file, u, utf8_encode
+from jac.exceptions import InvalidCompressorError
 
 
 class CoffeeScriptCompressor(object):
@@ -13,14 +15,32 @@ class CoffeeScriptCompressor(object):
     uses rjsmin for minification.
     """
 
+    binary = 'coffee'
+    extra_args = []
+
     @classmethod
-    def compile(cls, what, mimetype='text/coffeescript', cwd=None, uri_cwd=None, debug=None):
+    def compile(cls, what, mimetype='text/coffeescript', cwd=None, uri_cwd=None,
+                debug=None):
+        args = ['--compile', '--stdio']
 
-        args = ['coffee', '--compile', '--stdio']
+        if cls.extra_args:
+            args.extend(cls.extra_args)
 
-        handler = subprocess.Popen(
-            args, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-            stderr=subprocess.PIPE, cwd=None)
+        args.insert(0, cls.binary)
+
+        try:
+            handler = subprocess.Popen(args, stdout=subprocess.PIPE,
+                                       stdin=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, cwd=None)
+        except OSError as e:
+            msg = '{0} encountered an error when executing {1}: {2}'.format(
+                cls.__name__,
+                cls.binary,
+                u(e),
+            )
+            if e.errno == errno.ENOENT:
+                msg += ' Make sure {0} is in your PATH.'.format(cls.binary)
+            raise InvalidCompressorError(msg)
 
         if isinstance(what, file):
             what = what.read()

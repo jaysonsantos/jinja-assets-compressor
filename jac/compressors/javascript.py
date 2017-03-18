@@ -10,8 +10,8 @@ class JavaScriptCompressor(object):
     """
 
     @classmethod
-    def compile(cls, what, mimetype='text/javascript', cwd=None,
-                uri_cwd=None, debug=None):
+    def compile(cls, what, mimetype='text/javascript', cwd=None, uri_cwd=None,
+                debug=None):
         if debug:
             return what
         return jsmin(what)
