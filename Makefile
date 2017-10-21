@@ -10,8 +10,10 @@ clean:
 	@rm -rf build/ dist/
 
 lint:
-	flake8 jac tests
-	isort -c --recursive jac tests
+	flake8 jac tests setup.py
+	isort -c --recursive jac tests setup.py
 
 isort_fix:
-	isort -y --recursive jac tests
+	isort -y --recursive jac tests setup.py
+
+.PHONY: test coverage clean lint isort_fix
