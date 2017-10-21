@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from jac.contrib.flask import JAC, static_finder
 import mock
 import pytest
+
+from jac.contrib.flask import JAC
+from jac.contrib.flask import static_finder
 
 
 @pytest.fixture

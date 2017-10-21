@@ -4,8 +4,8 @@ import os
 
 from jac.compat import u
 from jac.compressors.coffee import CoffeeScriptCompressor
-from jac.compressors.less import LessCompressor
 from jac.compressors.javascript import JavaScriptCompressor
+from jac.compressors.less import LessCompressor
 from jac.compressors.sass import SassCompressor
 
 
@@ -33,7 +33,9 @@ def static_finder(app):
                     data = rule.match(u('|{0}').format(path))
 
                 if data:
-                    static_folder = blueprint.static_folder if with_blueprint and blueprint.static_folder is not None else app.static_folder
+                    static_folder = blueprint.static_folder \
+                        if with_blueprint and blueprint.static_folder is not None \
+                        else app.static_folder
                     return os.path.join(static_folder, data['filename'])
 
         raise IOError(2, u('File not found {0}.').format(path))
@@ -84,8 +86,10 @@ class JAC(object):
         app.jinja_env.compressor_offline_compress = app.config.get('COMPRESSOR_OFFLINE_COMPRESS', False)
         app.jinja_env.compressor_follow_symlinks = app.config.get('COMPRESSOR_FOLLOW_SYMLINKS', False)
         app.jinja_env.compressor_debug = app.config.get('COMPRESSOR_DEBUG', False)
-        app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or os.path.join(app.static_folder, 'sdist')
-        app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or app.static_url_path + '/sdist'
+        app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or \
+            os.path.join(app.static_folder, 'sdist')
+        app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or \
+            app.static_url_path + '/sdist'
         app.jinja_env.compressor_classes = app.config.get('COMPRESSOR_CLASSES', {
             'text/css': LessCompressor,
             'text/coffeescript': CoffeeScriptCompressor,

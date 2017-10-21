@@ -1,13 +1,15 @@
 from __future__ import absolute_import
+
 import io
 
 import jinja2
 import jinja2.ext
-from jinja2 import nodes
-from jinja2.ext import Extension
-from jinja2.nodes import CallBlock, Call, ExtensionAttribute
+from jinja2.nodes import Call
+from jinja2.nodes import CallBlock
+from jinja2.nodes import ExtensionAttribute
 
-from jac.exceptions import TemplateSyntaxError, TemplateDoesNotExist
+from jac.exceptions import TemplateDoesNotExist
+from jac.exceptions import TemplateSyntaxError
 
 
 class Jinja2Parser(object):
@@ -56,9 +58,9 @@ class Jinja2Parser(object):
     def walk_nodes(self, node, block_name=None):
         for node in self.get_nodelist(node):
             if (isinstance(node, CallBlock) and
-              isinstance(node.call, Call) and
-              isinstance(node.call.node, ExtensionAttribute) and
-              node.call.node.identifier == self.COMPRESSOR_ID):
+                isinstance(node.call, Call) and
+                isinstance(node.call.node, ExtensionAttribute) and
+                    node.call.node.identifier == self.COMPRESSOR_ID):
                 node.call.node.name = '_compress_block'
                 yield node
             else:

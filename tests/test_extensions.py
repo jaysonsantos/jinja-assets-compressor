@@ -3,12 +3,12 @@
 import hashlib
 import os
 
+import jinja2
 import mock
 import pytest
 
-import jinja2
-
-from jac.compat import u, open, utf8_encode
+from jac.compat import open
+from jac.compat import utf8_encode
 
 
 class TestCompression:
@@ -60,19 +60,24 @@ alert("Hi");
 
     def test_compile(self, tmpdir, html_css):
         from jac import CompressorExtension
-        ext = CompressorExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
+        ext = CompressorExtension(mock.Mock(compressor_output_dir=tmpdir,
+                                            compressor_static_prefix='/static', compressor_source_dirs=[]))
 
-        assert ext._compress_block('css', mock.Mock(return_value=html_css)) == '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
+        assert ext._compress_block('css', mock.Mock(return_value=html_css)) == \
+            '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
 
     def test_compile_js(self, tmpdir, html_js):
         from jac import CompressorExtension
-        ext = CompressorExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[]))
+        ext = CompressorExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static',
+                                            compressor_source_dirs=[]))
 
-        assert ext._compress_block('js', mock.Mock(return_value=html_js)) == '<script type="text/javascript" src="/static/0749ffbc6e886a3a01ee6e6c15efc779.js"></script>'
+        assert ext._compress_block('js', mock.Mock(return_value=html_js)) == \
+            '<script type="text/javascript" src="/static/0749ffbc6e886a3a01ee6e6c15efc779.js"></script>'
 
     def test_compile_file(self, tmpdir):
         from jac import CompressorExtension
-        ext = CompressorExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static', compressor_source_dirs=[str(tmpdir)]))
+        ext = CompressorExtension(mock.Mock(compressor_output_dir=tmpdir, compressor_static_prefix='/static',
+                                            compressor_source_dirs=[str(tmpdir)]))
         static_file = os.path.join(str(tmpdir), 'test.sass')
 
         with open(static_file, 'w', encoding='utf-8') as f:
@@ -93,7 +98,8 @@ $margin: 16px
         with open(static_file) as f:
             expected_hash.update(utf8_encode(f.read()))
 
-        assert ext._compress_block('css', mock.Mock(return_value=html)) == '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
+        assert ext._compress_block('css', mock.Mock(return_value=html)) == \
+            '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
 
     def test_offline_compress(self, env):
         from jac import Compressor
@@ -117,4 +123,4 @@ $margin: 16px
 
         compressor.offline_compress(env, [os.path.join(tmpdir, 'templates')])
 
-        assert os.path.exists(env.compressor_output_dir) == True
+        assert os.path.exists(env.compressor_output_dir) is True

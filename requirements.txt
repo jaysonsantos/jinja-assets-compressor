@@ -1,5 +1,6 @@
 Jinja2
-beautifulsoup4==4.5.1
-rjsmin==1.0.12
-ordereddict==1.1
-six==1.10.0
+beautifulsoup4
+rjsmin
+ordereddict
+six
+

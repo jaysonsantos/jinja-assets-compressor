@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from .compressors.coffee import CoffeeScriptCompressor
-from .compressors.less import LessCompressor
 from .compressors.javascript import JavaScriptCompressor
+from .compressors.less import LessCompressor
 from .compressors.sass import SassCompressor
+
 
 class Config(dict):
 
