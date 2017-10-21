@@ -1,9 +1,10 @@
 import pytest
 
 from jac.compressors.coffee import CoffeeScriptCompressor
-from jac.compressors.less import LessCompressor
 from jac.compressors.javascript import JavaScriptCompressor
+from jac.compressors.less import LessCompressor
 from jac.compressors.sass import SassCompressor
+
 
 class TestSass:
     @pytest.fixture

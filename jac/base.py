@@ -1,21 +1,28 @@
 # -*- coding: utf-8 -*-
 
-import os
 import hashlib
+import os
+
 from bs4 import BeautifulSoup
 
-from jac.compat import u, open, file, basestring, utf8_encode
+from jac.compat import basestring
+from jac.compat import file
+from jac.compat import open
+from jac.compat import u
+from jac.compat import utf8_encode
 from jac.config import Config
-from jac.exceptions import TemplateSyntaxError, TemplateDoesNotExist, OfflineGenerationError
+from jac.exceptions import OfflineGenerationError
+from jac.exceptions import TemplateDoesNotExist
+from jac.exceptions import TemplateSyntaxError
 from jac.parser import Jinja2Parser
 
 try:
-    from collections import OrderedDict # Python >= 2.7
+    from collections import OrderedDict  # Python >= 2.7
 except ImportError:
-    from ordereddict import OrderedDict # Python 2.6
+    from ordereddict import OrderedDict  # Python 2.6
 
 try:
-    import lxml
+    import lxml  # noqa
     PARSER = 'lxml'
 except ImportError:
     PARSER = 'html.parser'
@@ -151,7 +158,8 @@ class Compressor(object):
 
             for d in dirs:
                 if self.config.compressor_static_prefix_precompress is not None and path.startswith('/'):
-                    path = path.replace(self.config.compressor_static_prefix_precompress, '', 1).lstrip(os.sep).lstrip('/')
+                    path = path.replace(self.config.compressor_static_prefix_precompress, '', 1).\
+                        lstrip(os.sep).lstrip('/')
                 filename = os.path.join(d, path)
                 if os.path.exists(filename):
                     return filename
@@ -245,8 +253,6 @@ class Compressor(object):
     def find_template_files(self, template_dirs):
         templates = set()
         for d in template_dirs:
-            for root, dirs, files in os.walk(d,
-                    followlinks=self.config.compressor_follow_symlinks):
-                templates.update(os.path.join(root, name)
-                    for name in files if not name.startswith('.'))
+            for root, dirs, files in os.walk(d, followlinks=self.config.compressor_follow_symlinks):
+                templates.update(os.path.join(root, name) for name in files if not name.startswith('.'))
         return templates

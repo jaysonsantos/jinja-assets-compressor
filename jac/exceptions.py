@@ -4,6 +4,7 @@ class JACException(Exception):
     """
     pass
 
+
 class OfflineGenerationError(JACException):
     """
     Offline compression generation related exceptions

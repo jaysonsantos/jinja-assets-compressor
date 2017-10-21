@@ -3,7 +3,9 @@
 import errno
 import subprocess
 
-from jac.compat import file, u, utf8_encode
+from jac.compat import file
+from jac.compat import u
+from jac.compat import utf8_encode
 from jac.exceptions import InvalidCompressorError
 
 

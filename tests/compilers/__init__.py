@@ -1,6 +1,5 @@
 import mock
 import pytest
-
 from six import StringIO
 
 

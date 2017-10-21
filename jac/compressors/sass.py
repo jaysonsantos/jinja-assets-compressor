@@ -3,7 +3,9 @@
 import errno
 import subprocess
 
-from jac.compat import file, u, utf8_encode
+from jac.compat import file
+from jac.compat import u
+from jac.compat import utf8_encode
 from jac.exceptions import InvalidCompressorError
 
 
@@ -32,10 +34,8 @@ class SassCompressor(object):
         args.insert(0, cls.binary)
 
         try:
-            handler = subprocess.Popen(args,
-                                    stdout=subprocess.PIPE,
-                                    stdin=subprocess.PIPE,
-                                    stderr=subprocess.PIPE, cwd=None)
+            handler = subprocess.Popen(args, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, cwd=None)
         except OSError as e:
             msg = '{0} encountered an error when executing {1}: {2}'.format(
                 cls.__name__,
