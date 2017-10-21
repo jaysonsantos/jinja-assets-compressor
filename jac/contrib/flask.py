@@ -98,7 +98,8 @@ class JAC(object):
             'text/sass': SassCompressor,
             'text/scss': SassCompressor,
         }
-        app.jinja_env.compressor_classes.update(app.config.get('COMPRESSOR_CLASSES', {}))
+        if isinstance(app.config.get('COMPRESSOR_CLASSES'), dict):
+            app.jinja_env.compressor_classes.update(app.config.get('COMPRESSOR_CLASSES'))
         app.jinja_env.compressor_source_dirs = static_finder(app)
 
     def set_compressor(self, mimetype, compressor_cls):
