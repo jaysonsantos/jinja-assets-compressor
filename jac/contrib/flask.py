@@ -90,14 +90,16 @@ class JAC(object):
             os.path.join(app.static_folder, 'sdist')
         app.jinja_env.compressor_static_prefix = app.config.get('COMPRESSOR_STATIC_PREFIX') or \
             app.static_url_path + '/sdist'
-        app.jinja_env.compressor_classes = app.config.get('COMPRESSOR_CLASSES', {
+        app.jinja_env.compressor_classes = {
             'text/css': LessCompressor,
             'text/coffeescript': CoffeeScriptCompressor,
             'text/less': LessCompressor,
             'text/javascript': JavaScriptCompressor,
             'text/sass': SassCompressor,
             'text/scss': SassCompressor,
-        })
+        }
+        if isinstance(app.config.get('COMPRESSOR_CLASSES'), dict):
+            app.jinja_env.compressor_classes.update(app.config.get('COMPRESSOR_CLASSES'))
         app.jinja_env.compressor_source_dirs = static_finder(app)
 
     def set_compressor(self, mimetype, compressor_cls):
