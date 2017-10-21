@@ -10,7 +10,7 @@ setup(
     name='jac',
     author='Jayson Reis',
     author_email='santosdosreis@gmail.com',
-    version='0.16.2',
+    version='0.16.3',
     packages=find_packages(exclude=('tests*', )),
     install_requires=open('requirements.txt').readlines(),
     description='A Jinja extension (compatible with Flask and other frameworks) '
