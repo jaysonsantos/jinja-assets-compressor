@@ -115,7 +115,7 @@ $margin: 16px
 
         os.makedirs(os.path.join(tmpdir, 'templates'))
         with open(os.path.join(tmpdir, 'templates', 'test.html'), 'w') as fh:
-            fh.write('<html>{% compress "css" %}'+css+'{% endcompress %}</html>')
+            fh.write('<html>{% compress "css" %}' + css + '{% endcompress %}</html>')
 
         os.makedirs(os.path.join(tmpdir, 'static'))
         with open(os.path.join(tmpdir, 'static', 'test.css'), 'w') as fh:

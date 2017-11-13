@@ -196,5 +196,13 @@ jac.set_compressor('text/sass', CustomSassCompressor)
 virtualenv venv
 . venv/bin/activate
 pip install -r requirements_tests.txt
-make test
+make coverage
+make lint
+```
+
+Or use tox to run with multiple python versions:
+
+```
+pip install tox
+tox
 ```
