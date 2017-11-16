@@ -1,4 +1,4 @@
 exclude *.pyc *.pyo
 include requirements.txt
-include README.md
+include README.rst
 include LICENSE

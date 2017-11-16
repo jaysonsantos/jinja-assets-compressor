@@ -17,7 +17,7 @@ setup(
     install_requires=open('requirements.txt').readlines(),
     description='A Jinja extension (compatible with Flask and other frameworks) '
                 'to compile and/or compress your assets.',
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
     url='https://github.com/jaysonsantos/jinja-assets-compressor',
     classifiers=[
         'Development Status :: 4 - Beta',
