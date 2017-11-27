@@ -181,7 +181,7 @@ class Compressor(object):
                 if tag.name == 'style':
                     tag['type'] = 'text/css'
             else:
-                tag['type'] == tag['type'].lower()
+                tag['type'] = tag['type'].lower()
 
             if tag.get('type') is None:
                 raise RuntimeError(u('Tags to be compressed must have a type attribute: {0}').format(u(tag)))
@@ -198,7 +198,7 @@ class Compressor(object):
         """Returns an html element pointing to filename as a string.
         """
         if type.lower() == 'css':
-            return u('<link type="text/css" rel="stylesheet" href="{0}" />').format(filename)
+            return u('<link type="text/css" rel="stylesheet" href="{0}">').format(filename)
         elif type.lower() == 'js':
             return u('<script type="text/javascript" src="{0}"></script>').format(filename)
         else:

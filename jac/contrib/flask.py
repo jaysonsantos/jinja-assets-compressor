@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 import os
+import shutil
+import sys
+
+from jinja2.utils import import_string
 
 from jac.compat import u
 from jac.compressors.coffee import CoffeeScriptCompressor
@@ -107,3 +113,42 @@ class JAC(object):
         if not hasattr(self, 'app') or self.app is None:
             raise RuntimeError('Must initialize JAC with a Flask app first.')
         self.app.jinja_env.compressor_classes[mimetype] = compressor_cls
+
+
+def offline_compile(app):
+    env = app.jinja_env
+
+    if os.path.exists(env.compressor_output_dir):
+        print('Deleting previously compressed files in {output_dir}'
+              .format(output_dir=env.compressor_output_dir))
+        shutil.rmtree(env.compressor_output_dir)
+    else:
+        print('No previous compressed files found in {output_dir}'
+              .format(output_dir=env.compressor_output_dir))
+
+    template_dirs = [os.path.join(app.root_path, x)
+                     for x in get_template_dirs(app)]
+
+    print('Compressing static assets into {output_dir}'
+          .format(output_dir=env.compressor_output_dir))
+    compressor = env.extensions['jac.extension.CompressorExtension'].compressor
+    compressor.offline_compress(env, template_dirs)
+
+    print('Finished offline-compressing static assets.')
+    return 0
+
+
+if __name__ == '__main__':
+    if len(sys.argv) <= 1:
+        print('You have to specify the app i.e. my_module:create_app or my_module:app', file=sys.stderr)
+        exit(1)
+
+    try:
+        from flask import Flask
+    except ImportError:
+        print('Make sure you have flask installed to run this script\n\n', file=sys.stderr)
+        raise
+
+    app_factory = import_string(sys.argv[1])
+    app = app_factory() if callable(app_factory) and not isinstance(app_factory, Flask) else app_factory
+    sys.exit(offline_compile(app))

@@ -54,7 +54,7 @@ alert("Hi");
 
     def test_render(self, env, html_template):
         template = env.from_string(html_template)
-        expected = '<link type="text/css" rel="stylesheet" href="/static/dist/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
+        expected = '<link type="text/css" rel="stylesheet" href="/static/dist/734b0dec0b33781a9b57f86b1a5e02a3.css">'
 
         assert expected == template.render()
 
@@ -64,7 +64,7 @@ alert("Hi");
                                             compressor_static_prefix='/static', compressor_source_dirs=[]))
 
         assert ext._compress_block('css', mock.Mock(return_value=html_css)) == \
-            '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css" />'
+            '<link type="text/css" rel="stylesheet" href="/static/734b0dec0b33781a9b57f86b1a5e02a3.css">'
 
     def test_compile_js(self, tmpdir, html_js):
         from jac import CompressorExtension
@@ -93,13 +93,13 @@ $margin: 16px
   margin: $margin / 2
   border-color: $blue''')
 
-        html = '<link type="text/sass" rel="stylesheet" src="test.sass" />'
+        html = '<link type="text/sass" rel="stylesheet" src="test.sass">'
         expected_hash = hashlib.md5(utf8_encode(html))
         with open(static_file) as f:
             expected_hash.update(utf8_encode(f.read()))
 
         assert ext._compress_block('css', mock.Mock(return_value=html)) == \
-            '<link type="text/css" rel="stylesheet" href="/static/{}.css" />'.format(expected_hash.hexdigest())
+            '<link type="text/css" rel="stylesheet" href="/static/{}.css">'.format(expected_hash.hexdigest())
 
     def test_offline_compress(self, env):
         from jac import Compressor
@@ -111,7 +111,7 @@ $margin: 16px
         env.compressor_output_dir = os.path.join(tmpdir, 'dist')
 
         compressor = Compressor(environment=env)
-        css = '<link type="text/css" rel="stylesheet" href="/static/test.css" />'
+        css = '<link type="text/css" rel="stylesheet" href="/static/test.css">'
 
         os.makedirs(os.path.join(tmpdir, 'templates'))
         with open(os.path.join(tmpdir, 'templates', 'test.html'), 'w') as fh:
