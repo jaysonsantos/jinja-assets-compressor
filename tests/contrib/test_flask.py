@@ -16,6 +16,14 @@ def test_flask_extension_init_self_app(mocked_flask_app):
     assert ext.app is mocked_flask_app
 
 
+def test_flask_extension_lazy_init(mocked_flask_app):
+    """Make sure we save then app when initializing Flask with app factory."""
+    ext = JAC()
+    assert ext.app is None
+    ext.init_app(mocked_flask_app)
+    assert ext.app == mocked_flask_app
+
+
 def test_flask_extension_jinja_env_add_extension(mocked_flask_app):
     ext = JAC()
     ext.init_app(mocked_flask_app)

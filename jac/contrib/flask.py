@@ -101,6 +101,7 @@ class JAC(object):
         if isinstance(app.config.get('COMPRESSOR_CLASSES'), dict):
             app.jinja_env.compressor_classes.update(app.config.get('COMPRESSOR_CLASSES'))
         app.jinja_env.compressor_source_dirs = static_finder(app)
+        self.app = app
 
     def set_compressor(self, mimetype, compressor_cls):
         if not hasattr(self, 'app') or self.app is None:

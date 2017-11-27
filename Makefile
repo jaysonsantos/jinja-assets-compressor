@@ -11,7 +11,6 @@ clean:
 
 lint:
 	flake8 jac tests setup.py
-	isort -c --recursive jac tests setup.py
 
 isort_fix:
 	isort -y --recursive jac tests setup.py
