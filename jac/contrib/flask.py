@@ -28,7 +28,10 @@ def static_finder(app):
             for rule in app.url_map.iter_rules():
                 if '.' in rule.endpoint:
                     with_blueprint = True
-                    blueprint = app.blueprints[rule.endpoint.rsplit('.', 1)[0]]
+                    blueprint_name = rule.endpoint.rsplit('.', 1)[0]
+                    if blueprint_name not in app.blueprints:
+                        continue
+                    blueprint = app.blueprints[blueprint_name]
 
                     data = rule.match(u('{subdomain}|{path}').format(
                         subdomain=blueprint.subdomain or '',
