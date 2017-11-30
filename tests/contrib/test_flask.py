@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
+import tempfile
+
 import mock
 import pytest
+from flask import Flask
 
 from jac.contrib.flask import JAC
 from jac.contrib.flask import static_finder
@@ -56,3 +60,21 @@ def test_flask_extension_jinja_env_source_dirs(mocked_flask_app):
     ext = JAC()
     ext.init_app(mocked_flask_app)
     mocked_flask_app.jinja_env.compressor_source_dirs == static_finder(mocked_flask_app)
+
+
+def test_flask_extension_find_static():
+    app = Flask(__name__)
+
+    # Avoid breaking static_finder when an url is registered with an endpoint which does not match with the blueprint
+    app.add_url_rule('/some/url', 'wrong.blueprint_url')
+
+    JAC(app)
+    find = static_finder(app)
+
+    with tempfile.TemporaryDirectory() as static_dir:
+        app.static_folder = static_dir
+        static_file = os.path.join(static_dir, 'some.css')
+        with open(static_file, 'w') as f:
+            f.write('html {}')
+        # This should be findable even if some urls' endpoints use broken names
+        assert find('/static/some.css') == static_file
