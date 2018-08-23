@@ -1,6 +1,11 @@
 CHANGELOG
 ---------
 
+0.17.2
+``````
+
+- Make sure that flask contrib script always push an app context.
+
 0.17.1
 ``````
 
