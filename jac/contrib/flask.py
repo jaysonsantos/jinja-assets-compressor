@@ -154,4 +154,5 @@ if __name__ == '__main__':
 
     app_factory = import_string(sys.argv[1])
     app = app_factory() if callable(app_factory) and not isinstance(app_factory, Flask) else app_factory
-    sys.exit(offline_compile(app))
+    with app.app_context():
+        sys.exit(offline_compile(app))
