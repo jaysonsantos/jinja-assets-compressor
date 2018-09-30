@@ -37,8 +37,11 @@ class Compressor(object):
         else:
             self.config = Config(**kwargs)
 
-        # Only used to speed up offline compression script step
-        self.temp_cache = {}
+        # Cache output of make_hash in-memory when using offline compress
+        self.offline_hash_cache = {}
+
+        # Cache compressed contents during offline compress step
+        self.offline_compress_cache = {}
 
     def compress(self, html, compression_type):
 
@@ -107,8 +110,8 @@ class Compressor(object):
                 assets[outfile] = None
                 continue
 
-            if cache_key and cache_key in self.temp_cache:
-                compressed = self.temp_cache[cache_key]
+            if cache_key and cache_key in self.offline_compress_cache:
+                compressed = self.offline_compress_cache[cache_key]
             else:
                 text = self.get_contents(text)
                 compressed = compressor.compile(text,
@@ -117,7 +120,7 @@ class Compressor(object):
                                                 uri_cwd=uri_cwd,
                                                 debug=self.config.compressor_debug)
                 if cache_key:
-                    self.temp_cache[cache_key] = compressed
+                    self.offline_compress_cache[cache_key] = compressed
 
             if not os.path.exists(outfile):
                 if assets.get(outfile) is None:
@@ -138,6 +141,9 @@ class Compressor(object):
         return blocks
 
     def make_hash(self, html):
+        if self.config.compressor_offline_compress and html in self.offline_hash_cache:
+            return self.offline_hash_cache[html]
+
         soup = BeautifulSoup(html, PARSER)
         compilables = self.find_compilable_tags(soup)
         html_hash = hashlib.md5(utf8_encode(html))
@@ -153,7 +159,10 @@ class Compressor(object):
                         else:
                             break
 
-        return html_hash.hexdigest()
+        digest = html_hash.hexdigest()
+        if self.config.compressor_offline_compress:
+            self.offline_hash_cache[html] = digest
+        return digest
 
     def find_file(self, path):
         if callable(self.config.compressor_source_dirs):
