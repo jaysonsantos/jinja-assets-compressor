@@ -37,6 +37,12 @@ class Compressor(object):
         else:
             self.config = Config(**kwargs)
 
+        # Cache output of make_hash in-memory when using offline compress
+        self.offline_hash_cache = {}
+
+        # Cache compressed contents during offline compress step
+        self.offline_compress_cache = {}
+
     def compress(self, html, compression_type):
 
         if not self.config.compressor_enabled:
@@ -73,11 +79,13 @@ class Compressor(object):
                 uri_cwd = os.path.join(u(self.config.compressor_static_prefix), os.path.dirname(u(url)))
                 text = open(self.find_file(u(url)), 'r', encoding='utf-8')
                 cwd = os.path.dirname(text.name)
+                cache_key = u(url) if self.config.compressor_offline_compress else None
             else:
                 filename = u('inline{0}').format(count)
                 uri_cwd = None
                 text = c.string
                 cwd = None
+                cache_key = None
 
             mimetype = c['type'].lower()
             try:
@@ -102,12 +110,17 @@ class Compressor(object):
                 assets[outfile] = None
                 continue
 
-            text = self.get_contents(text)
-            compressed = compressor.compile(text,
-                                            mimetype=mimetype,
-                                            cwd=cwd,
-                                            uri_cwd=uri_cwd,
-                                            debug=self.config.compressor_debug)
+            if cache_key and cache_key in self.offline_compress_cache:
+                compressed = self.offline_compress_cache[cache_key]
+            else:
+                text = self.get_contents(text)
+                compressed = compressor.compile(text,
+                                                mimetype=mimetype,
+                                                cwd=cwd,
+                                                uri_cwd=uri_cwd,
+                                                debug=self.config.compressor_debug)
+                if cache_key:
+                    self.offline_compress_cache[cache_key] = compressed
 
             if not os.path.exists(outfile):
                 if assets.get(outfile) is None:
@@ -128,6 +141,9 @@ class Compressor(object):
         return blocks
 
     def make_hash(self, html):
+        if self.config.compressor_offline_compress and html in self.offline_hash_cache:
+            return self.offline_hash_cache[html]
+
         soup = BeautifulSoup(html, PARSER)
         compilables = self.find_compilable_tags(soup)
         html_hash = hashlib.md5(utf8_encode(html))
@@ -143,7 +159,10 @@ class Compressor(object):
                         else:
                             break
 
-        return html_hash.hexdigest()
+        digest = html_hash.hexdigest()
+        if self.config.compressor_offline_compress:
+            self.offline_hash_cache[html] = digest
+        return digest
 
     def find_file(self, path):
         if callable(self.config.compressor_source_dirs):
