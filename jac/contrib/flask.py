@@ -94,6 +94,9 @@ class JAC(object):
         app.jinja_env.compressor_enabled = app.config.get('COMPRESSOR_ENABLED', True)
         app.jinja_env.compressor_offline_compress = app.config.get('COMPRESSOR_OFFLINE_COMPRESS', False)
         app.jinja_env.compressor_cache_dir = app.config.get('COMPRESSOR_CACHE_DIR', None)
+        app.jinja_env.compressor_cache_dir = app.config.get('COMPRESSOR_CACHE_DIR') or \
+            app.config.get('COMPRESSOR_OUTPUT_DIR') or \
+            os.path.join(app.static_folder, 'sdist')
         app.jinja_env.compressor_follow_symlinks = app.config.get('COMPRESSOR_FOLLOW_SYMLINKS', False)
         app.jinja_env.compressor_debug = app.config.get('COMPRESSOR_DEBUG', False)
         app.jinja_env.compressor_output_dir = app.config.get('COMPRESSOR_OUTPUT_DIR') or \
