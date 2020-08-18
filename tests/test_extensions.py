@@ -2,9 +2,9 @@
 
 import hashlib
 import os
+from unittest import mock
 
 import jinja2
-import mock
 import pytest
 
 from jac.compat import open
@@ -49,8 +49,8 @@ alert("Hi");
 </script>'''
 
     @pytest.fixture
-    def html_template(self):
-        return '{% compress "css" %}' + self.html_css() + '{% endcompress %}'
+    def html_template(self, html_css):
+        return '{% compress "css" %}' + html_css + '{% endcompress %}'
 
     def test_render(self, env, html_template):
         template = env.from_string(html_template)
