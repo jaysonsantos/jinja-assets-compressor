@@ -2,9 +2,9 @@
 
 import hashlib
 import os
+from shutil import copyfile
 
 from bs4 import BeautifulSoup
-from shutil import copyfile
 
 from jac.compat import basestring
 from jac.compat import file
