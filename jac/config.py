@@ -11,6 +11,7 @@ class Config(dict):
     _defaults = {
         'compressor_enabled': True,
         'compressor_offline_compress': False,
+        'compressor_cache_dir': '',
         'compressor_follow_symlinks': False,
         'compressor_debug': False,
         'compressor_static_prefix': '/static/dist',

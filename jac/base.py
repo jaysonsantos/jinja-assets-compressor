@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+from shutil import copyfile
 
 from bs4 import BeautifulSoup
 
@@ -53,6 +54,24 @@ class Compressor(object):
 
         if not os.path.exists(u(self.config.compressor_output_dir)):
             os.makedirs(u(self.config.compressor_output_dir))
+
+        if self.config.compressor_offline_compress and self.config.compressor_cache_dir:
+            cached_file = os.path.join(
+                u(self.config.compressor_cache_dir),
+                u('{hash}.{extension}').format(
+                    hash=html_hash,
+                    extension=compression_type,
+                ),
+            )
+            output_file = os.path.join(
+                u(self.config.compressor_output_dir),
+                u('{hash}.{extension}').format(
+                    hash=html_hash,
+                    extension=compression_type,
+                ),
+            )
+            if os.path.exists(cached_file) and not os.path.exists(output_file):
+                copyfile(cached_file, output_file)
 
         cached_file = os.path.join(
             u(self.config.compressor_output_dir),

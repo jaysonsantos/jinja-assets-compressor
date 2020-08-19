@@ -124,3 +124,28 @@ $margin: 16px
         compressor.offline_compress(env, [os.path.join(tmpdir, 'templates')])
 
         assert os.path.exists(env.compressor_output_dir) is True
+
+    def test_offline_compress_with_cache(self, env):
+        from jac import Compressor
+
+        tmpdir = str(env.compressor_output_dir)
+
+        env.compressor_offline_compress = True
+        env.compressor_source_dirs = [os.path.join(tmpdir, 'static')]
+        env.compressor_output_dir = os.path.join(tmpdir, 'dist')
+        env.compressor_cache_dir = os.path.join(tmpdir, 'cache')
+
+        compressor = Compressor(environment=env)
+        css = '<link type="text/css" rel="stylesheet" href="/static/test.css">'
+
+        os.makedirs(os.path.join(tmpdir, 'templates'))
+        with open(os.path.join(tmpdir, 'templates', 'test.html'), 'w') as fh:
+            fh.write('<html>{% compress "css" %}' + css + '{% endcompress %}</html>')
+
+        os.makedirs(os.path.join(tmpdir, 'static'))
+        with open(os.path.join(tmpdir, 'static', 'test.css'), 'w') as fh:
+            fh.write('html { display: block; }')
+
+        compressor.offline_compress(env, [os.path.join(tmpdir, 'templates')])
+
+        assert os.path.exists(env.compressor_output_dir) is True
